@@ -42,12 +42,12 @@ jobs:
       NEXT_PUBLIC_USE_FIREBASE_EMULATORS: "false"
       RELEASE_BASE_URL: ${{ vars.RELEASE_BASE_URL }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           cache: npm
           node-version: 22
@@ -59,7 +59,7 @@ jobs:
       - name: Smoke deployed release URL
         run: npm run smoke:release
       - if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           if-no-files-found: ignore
           name: release-candidate-${{ inputs.environment }}-${{ github.run_id }}

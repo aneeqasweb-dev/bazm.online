@@ -36,7 +36,12 @@ export default async function Customer360Page({
         </AdminCard>
         <AdminCard>
           <p className="text-xs text-stone-500 uppercase">Lifetime spend</p>
-          <p className="text-2xl">{money(customer.metrics.spendMinor)}</p>
+          <p
+            className="text-2xl"
+            data-spend-minor={customer.metrics.spendMinor}
+          >
+            {money(customer.metrics.spendMinor)}
+          </p>
         </AdminCard>
         <AdminCard>
           <p className="text-xs text-stone-500 uppercase">Completed orders</p>

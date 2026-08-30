@@ -358,7 +358,7 @@ try {
     const profileChecks = {
       title: profileHtml.includes("Customer 360"),
       segment: profileHtml.includes("returning"),
-      spend: profileHtml.includes("1,000.00"),
+      spend: profileHtml.includes('data-spend-minor="100000"'),
       ordersLabel: profileHtml.includes("Completed orders"),
     };
     assert.ok(
