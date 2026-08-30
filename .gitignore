@@ -1,0 +1,34 @@
+# Dependencies and build output
+node_modules/
+.next/
+/functions/lib/
+/packages/*/lib/
+coverage/
+test-results/
+ops/terraform/.terraform/
+ops/terraform/*.tfstate
+ops/terraform/*.tfstate.*
+ops/terraform/*.tfplan
+ops/terraform/terraform.tfvars
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+
+# Local Firebase emulator data
+.firebase/
+firebase/.emulator-data/
+
+# Environment files (keep examples tracked)
+.env*
+!.env.example
+functions/.secret.local
+
+# Editor and operating-system files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Logs and local TypeScript state
+*.log
+*.tsbuildinfo

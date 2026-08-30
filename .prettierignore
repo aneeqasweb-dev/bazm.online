@@ -1,0 +1,12 @@
+node_modules/
+.next/
+functions/lib/
+coverage/
+test-results/
+.firebase/
+package-lock.json
+AGENTS.md
+CLAUDE.md
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*

@@ -1,0 +1,54 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function owns(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function hasCurrentActiveClaims() {
+      return signedIn()
+        && request.auth.token.isActive == true
+        && request.auth.token.claimsVersion == 1;
+    }
+
+    function isAdmin() {
+      return hasCurrentActiveClaims()
+        && request.auth.token.role in ['ADMIN', 'SUPER_ADMIN'];
+    }
+
+    function isActive() {
+      return hasCurrentActiveClaims();
+    }
+
+    function validCustomerProfileUpdate(userId) {
+      return owns(userId)
+        && isActive()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['name', 'phone', 'avatarPath', 'updatedAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.name.size() <= 80
+        && (request.resource.data.phone == null
+          || (request.resource.data.phone is string
+            && request.resource.data.phone.matches('^\\+92[0-9]{10}$')))
+        && (request.resource.data.avatarPath == null
+          || request.resource.data.avatarPath == 'avatars/' + userId + '/profile')
+        && request.resource.data.updatedAt is timestamp;
+    }
+
+    match /users/{userId} {
+      allow read: if (owns(userId) && isActive()) || isAdmin();
+      allow update: if validCustomerProfileUpdate(userId);
+      allow create, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

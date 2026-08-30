@@ -1,0 +1,269 @@
+{
+  "terraform": {
+    "required_version": ">= 1.8.0",
+    "required_providers": {
+      "google": {
+        "source": "hashicorp/google",
+        "version": "~> 7.43"
+      }
+    }
+  },
+  "provider": {
+    "google": {
+      "project": "${var.project_id}",
+      "region": "asia-south1"
+    }
+  },
+  "variable": {
+    "app_host": {
+      "description": "Public production hostname without scheme or path.",
+      "type": "string"
+    },
+    "billing_account_id": {
+      "description": "Billing account that owns the production Firebase project.",
+      "type": "string"
+    },
+    "budget_currency_code": {
+      "default": "USD",
+      "description": "ISO 4217 currency used by the billing account.",
+      "type": "string"
+    },
+    "monthly_budget_units": {
+      "default": 100,
+      "description": "Approved whole-currency monthly production budget.",
+      "type": "number"
+    },
+    "notification_channel_names": {
+      "description": "Existing Cloud Monitoring channel resource names for primary and backup responders.",
+      "type": ["list", "string"],
+      "validation": {
+        "condition": "${length(var.notification_channel_names) >= 2}",
+        "error_message": "At least two independently monitored notification channels are required."
+      }
+    },
+    "project_id": {
+      "description": "Dedicated Firebase/Google Cloud production project ID.",
+      "type": "string"
+    }
+  },
+  "data": {
+    "google_project": {
+      "current": {
+        "project_id": "${var.project_id}"
+      }
+    }
+  },
+  "resource": {
+    "google_monitoring_uptime_check_config": {
+      "web_health": {
+        "checker_type": "STATIC_IP_CHECKERS",
+        "content_matchers": [
+          {
+            "content": "\"status\":\"ok\"",
+            "matcher": "CONTAINS_STRING"
+          }
+        ],
+        "display_name": "bazm-production-web-health",
+        "http_check": {
+          "accepted_response_status_codes": [
+            {
+              "status_class": "STATUS_CLASS_2XX"
+            }
+          ],
+          "path": "/api/health",
+          "port": "443",
+          "request_method": "GET",
+          "use_ssl": true,
+          "validate_ssl": true
+        },
+        "log_check_failures": true,
+        "monitored_resource": {
+          "labels": {
+            "host": "${var.app_host}",
+            "project_id": "${var.project_id}"
+          },
+          "type": "uptime_url"
+        },
+        "period": "300s",
+        "timeout": "10s",
+        "user_labels": {
+          "environment": "production",
+          "service": "bazm-web"
+        }
+      }
+    },
+    "google_logging_metric": {
+      "function_errors": {
+        "description": "Unhandled errors emitted by Bazm second-generation Cloud Functions.",
+        "filter": "resource.type=\"cloud_run_revision\" AND labels.\"goog-managed-by\"=\"cloudfunctions\" AND severity>=ERROR",
+        "name": "bazm_function_errors"
+      },
+      "webhook_rejections": {
+        "description": "Rejected payment or refund webhook security events.",
+        "filter": "resource.type=\"cloud_run_revision\" AND jsonPayload.message=\"security.webhook.rejected\"",
+        "name": "bazm_webhook_rejections"
+      }
+    },
+    "google_monitoring_alert_policy": {
+      "function_errors": {
+        "combiner": "OR",
+        "conditions": [
+          {
+            "condition_threshold": {
+              "aggregations": [
+                {
+                  "alignment_period": "300s",
+                  "cross_series_reducer": "REDUCE_SUM",
+                  "per_series_aligner": "ALIGN_SUM"
+                }
+              ],
+              "comparison": "COMPARISON_GT",
+              "duration": "0s",
+              "filter": "metric.type=\"logging.googleapis.com/user/${google_logging_metric.function_errors.name}\" AND resource.type=\"cloud_run_revision\"",
+              "threshold_value": 0,
+              "trigger": {
+                "count": 1
+              }
+            },
+            "display_name": "Any function error in five minutes"
+          }
+        ],
+        "display_name": "Bazm production function errors",
+        "documentation": {
+          "content": "Severity: high. Follow docs/operations-runbook.md, correlate by requestId, and check payments/orders/inventory before retrying work.",
+          "mime_type": "text/markdown"
+        },
+        "enabled": true,
+        "notification_channels": "${var.notification_channel_names}",
+        "user_labels": {
+          "environment": "production",
+          "severity": "high"
+        }
+      },
+      "uptime": {
+        "combiner": "OR",
+        "conditions": [
+          {
+            "condition_threshold": {
+              "aggregations": [
+                {
+                  "alignment_period": "300s",
+                  "cross_series_reducer": "REDUCE_COUNT_FALSE",
+                  "group_by_fields": ["resource.label.host"],
+                  "per_series_aligner": "ALIGN_NEXT_OLDER"
+                }
+              ],
+              "comparison": "COMPARISON_GT",
+              "duration": "60s",
+              "filter": "metric.type=\"monitoring.googleapis.com/uptime_check/check_passed\" AND metric.label.check_id=\"${google_monitoring_uptime_check_config.web_health.uptime_check_id}\" AND resource.type=\"uptime_url\"",
+              "threshold_value": 1,
+              "trigger": {
+                "count": 1
+              }
+            },
+            "display_name": "Health check fails from multiple locations"
+          }
+        ],
+        "display_name": "Bazm production web unavailable",
+        "documentation": {
+          "content": "Severity: critical. Follow docs/operations-runbook.md. Verify DNS/TLS and hosting first, then roll back if the failure began with a release.",
+          "mime_type": "text/markdown"
+        },
+        "enabled": true,
+        "notification_channels": "${var.notification_channel_names}",
+        "user_labels": {
+          "environment": "production",
+          "severity": "critical"
+        }
+      },
+      "webhook_rejections": {
+        "combiner": "OR",
+        "conditions": [
+          {
+            "condition_threshold": {
+              "aggregations": [
+                {
+                  "alignment_period": "300s",
+                  "cross_series_reducer": "REDUCE_SUM",
+                  "per_series_aligner": "ALIGN_SUM"
+                }
+              ],
+              "comparison": "COMPARISON_GT",
+              "duration": "0s",
+              "filter": "metric.type=\"logging.googleapis.com/user/${google_logging_metric.webhook_rejections.name}\" AND resource.type=\"cloud_run_revision\"",
+              "threshold_value": 10,
+              "trigger": {
+                "count": 1
+              }
+            },
+            "display_name": "More than ten rejected webhooks in five minutes"
+          }
+        ],
+        "display_name": "Bazm payment webhook rejection spike",
+        "documentation": {
+          "content": "Severity: high. Check provider delivery logs and signing-secret versions before rotating or replaying any event.",
+          "mime_type": "text/markdown"
+        },
+        "enabled": true,
+        "notification_channels": "${var.notification_channel_names}",
+        "user_labels": {
+          "environment": "production",
+          "severity": "high"
+        }
+      }
+    },
+    "google_billing_budget": {
+      "production": {
+        "all_updates_rule": {
+          "disable_default_iam_recipients": false,
+          "monitoring_notification_channels": "${var.notification_channel_names}"
+        },
+        "amount": {
+          "specified_amount": {
+            "currency_code": "${var.budget_currency_code}",
+            "units": "${tostring(var.monthly_budget_units)}"
+          }
+        },
+        "billing_account": "${var.billing_account_id}",
+        "budget_filter": {
+          "projects": ["projects/${data.google_project.current.number}"]
+        },
+        "display_name": "Bazm production monthly budget",
+        "threshold_rules": [
+          {
+            "spend_basis": "CURRENT_SPEND",
+            "threshold_percent": 0.5
+          },
+          {
+            "spend_basis": "CURRENT_SPEND",
+            "threshold_percent": 0.8
+          },
+          {
+            "spend_basis": "CURRENT_SPEND",
+            "threshold_percent": 1
+          },
+          {
+            "spend_basis": "FORECASTED_SPEND",
+            "threshold_percent": 1
+          }
+        ]
+      }
+    },
+    "google_firestore_backup_schedule": {
+      "daily": {
+        "database": "(default)",
+        "daily_recurrence": {},
+        "project": "${var.project_id}",
+        "retention": "1209600s"
+      },
+      "weekly": {
+        "database": "(default)",
+        "project": "${var.project_id}",
+        "retention": "8467200s",
+        "weekly_recurrence": {
+          "day": "SUNDAY"
+        }
+      }
+    }
+  }
+}

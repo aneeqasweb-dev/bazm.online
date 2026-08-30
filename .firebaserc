@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "demo-bazm-online",
+    "staging": "bazmonline-staging-aneeqa",
+    "production": "bazmonline"
+  }
+}

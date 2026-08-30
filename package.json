@@ -1,0 +1,43 @@
+{
+  "name": "bazm-online",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "functions",
+    "packages/domain",
+    "tests/rules"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace frontend",
+    "build": "npm run build --workspace @bazm/domain && npm run build --workspace frontend && npm run build --workspace functions",
+    "build:emulators": "NEXT_PUBLIC_APP_URL=https://bazm.online NEXT_PUBLIC_USE_FIREBASE_EMULATORS=true NEXT_PUBLIC_FIREBASE_API_KEY=demo-api-key NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=demo-bazm-online.firebaseapp.com NEXT_PUBLIC_FIREBASE_PROJECT_ID=demo-bazm-online NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=demo-bazm-online.appspot.com NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123 NEXT_PUBLIC_FIREBASE_APP_ID=1:123:web:emulators NEXT_PUBLIC_ENABLE_GOOGLE_AUTH=false npm run build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "npm run lint --workspace @bazm/domain && npm run lint --workspace frontend && npm run lint --workspace functions && npm run lint --workspace @bazm/rules-tests",
+    "typecheck": "npm run build --workspace @bazm/domain && npm run typecheck --workspace @bazm/domain && npm run typecheck --workspace frontend && npm run typecheck --workspace functions && npm run typecheck --workspace @bazm/rules-tests",
+    "test": "npm run build --workspace @bazm/domain && npm run test --workspace @bazm/domain && npm run test --workspace frontend && npm run test --workspace functions",
+    "test:e2e": "playwright test --config=playwright.config.mjs",
+    "test:phase19": "node tests/phase-19-testing-flow.mjs && npm run test:e2e",
+    "config:audit": "node scripts/audit-production-config.mjs",
+    "smoke:release": "node scripts/smoke-release-url.mjs",
+    "test:phase20:static": "npm run config:audit && node tests/phase-20-production-readiness.mjs --static-only",
+    "test:phase20": "npm run config:audit && node tests/phase-20-production-readiness.mjs",
+    "check": "npm run test:phase20:static && npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build && npm run config:audit",
+    "prepare:emulators": "node scripts/prepare-emulator-secrets.mjs",
+    "test:emulators": "npm run build:emulators && npm run prepare:emulators && node tests/phase-3-indexes.mjs && DEBUG= METADATA_SERVER_DETECTION=none CHOKIDAR_USEPOLLING=true CHOKIDAR_INTERVAL=500 NEXT_PUBLIC_APP_URL=http://127.0.0.1:3119 NEXT_PUBLIC_USE_FIREBASE_EMULATORS=true NEXT_PUBLIC_FIREBASE_API_KEY=demo-api-key NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=demo-bazm-online.firebaseapp.com NEXT_PUBLIC_FIREBASE_PROJECT_ID=demo-bazm-online NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=demo-bazm-online.appspot.com NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123 NEXT_PUBLIC_FIREBASE_APP_ID=1:123:web:phase19 NEXT_PUBLIC_ENABLE_GOOGLE_AUTH=false npx --yes firebase-tools@latest emulators:exec --project demo-bazm-online --only auth,firestore,functions,storage \"npm run test --workspace @bazm/rules-tests && node tests/functions-health.mjs && node tests/registration-flow.mjs && node tests/phase-2-auth-flow.mjs && node tests/phase-3-persistence-flow.mjs && node tests/phase-4-category-flow.mjs && node tests/phase-5-product-flow.mjs && node tests/phase-6-storefront-flow.mjs && node tests/phase-7-cart-flow.mjs && node tests/phase-8-inventory-flow.mjs && node tests/phase-9-checkout-flow.mjs && node tests/phase-10-payment-flow.mjs && node tests/phase-11-email-flow.mjs && node tests/phase-12-admin-flow.mjs && node tests/phase-13-crm-flow.mjs && node tests/phase-14-review-flow.mjs && node tests/phase-15-return-flow.mjs && node tests/phase-16-seo-flow.mjs && node tests/phase-17-performance-flow.mjs && node tests/phase-18-security-flow.mjs && npm run test:phase19 && npm run test:phase20\"",
+    "verify": "npm run check && npm run test:emulators",
+    "emulators": "npm run prepare:emulators && DEBUG= METADATA_SERVER_DETECTION=none CHOKIDAR_USEPOLLING=true CHOKIDAR_INTERVAL=500 npx --yes firebase-tools@latest emulators:start --project demo-bazm-online",
+    "emulators:exec": "npm run prepare:emulators && DEBUG= METADATA_SERVER_DETECTION=none CHOKIDAR_USEPOLLING=true CHOKIDAR_INTERVAL=500 npx --yes firebase-tools@latest emulators:exec --project demo-bazm-online --only auth,firestore,functions,storage \"npm run test\""
+  },
+  "engines": {
+    "node": ">=22 <25"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "axe-core": "^4.13.0",
+    "jsdom": "^29.1.1",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.7.1"
+  }
+}

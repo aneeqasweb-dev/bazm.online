@@ -1,0 +1,9 @@
+project_id               = "bazm-online-production"
+app_host                 = "bazm.online"
+billing_account_id       = "000000-000000-000000"
+budget_currency_code     = "USD"
+monthly_budget_units     = 100
+notification_channel_names = [
+  "projects/bazm-online-production/notificationChannels/PRIMARY_CHANNEL_ID",
+  "projects/bazm-online-production/notificationChannels/BACKUP_CHANNEL_ID",
+]

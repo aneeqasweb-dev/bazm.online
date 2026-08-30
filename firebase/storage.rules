@@ -1,0 +1,51 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isActiveOwner(userId) {
+      return signedIn()
+        && request.auth.uid == userId
+        && request.auth.token.isActive == true
+        && request.auth.token.claimsVersion == 1;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.isActive == true
+        && request.auth.token.claimsVersion == 1
+        && request.auth.token.role in ['ADMIN', 'SUPER_ADMIN'];
+    }
+
+    match /avatars/{userId}/profile {
+      allow read: if isActiveOwner(userId) || isAdmin();
+      allow create, update: if isActiveOwner(userId)
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+      allow delete: if isActiveOwner(userId);
+    }
+
+    match /products/{productId}/{fileName} {
+      allow read: if true;
+      allow create, update: if isAdmin()
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+      allow delete: if isAdmin();
+    }
+
+    match /reviews/{userId}/{fileName=**} {
+      allow read: if true;
+      allow create, update: if isActiveOwner(userId)
+        && request.resource.size < 3 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+      allow delete: if isActiveOwner(userId) || isAdmin();
+    }
+
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}

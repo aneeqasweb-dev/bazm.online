@@ -1,0 +1,63 @@
+name: Release candidate verification
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Protected GitHub environment containing approved release variables
+        options:
+          - staging
+          - production
+        required: true
+        type: choice
+
+permissions:
+  contents: read
+
+concurrency:
+  cancel-in-progress: false
+  group: release-candidate-${{ inputs.environment }}
+
+jobs:
+  verify:
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      APP_URL: ${{ vars.APP_URL }}
+      EMAIL_FROM_EMAIL: ${{ vars.EMAIL_FROM_EMAIL }}
+      EMAIL_FROM_NAME: ${{ vars.EMAIL_FROM_NAME }}
+      EMAIL_PROVIDER: ${{ vars.EMAIL_PROVIDER }}
+      EMAIL_PROVIDER_ENDPOINT: ${{ vars.EMAIL_PROVIDER_ENDPOINT }}
+      NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+      NEXT_PUBLIC_ENABLE_GOOGLE_AUTH: ${{ vars.NEXT_PUBLIC_ENABLE_GOOGLE_AUTH }}
+      NEXT_PUBLIC_FIREBASE_API_KEY: ${{ vars.NEXT_PUBLIC_FIREBASE_API_KEY }}
+      NEXT_PUBLIC_FIREBASE_APP_ID: ${{ vars.NEXT_PUBLIC_FIREBASE_APP_ID }}
+      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ vars.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+      NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ vars.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
+      NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ vars.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
+      NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ vars.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+      NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ vars.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+      NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY: ${{ vars.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY }}
+      NEXT_PUBLIC_USE_FIREBASE_EMULATORS: "false"
+      RELEASE_BASE_URL: ${{ vars.RELEASE_BASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: npm
+          node-version: 22
+      - run: npm ci
+      - name: Audit protected environment without printing values
+        run: node scripts/audit-production-config.mjs --environment "${{ inputs.environment }}"
+      - name: Verify release candidate
+        run: npm run verify
+      - name: Smoke deployed release URL
+        run: npm run smoke:release
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          if-no-files-found: ignore
+          name: release-candidate-${{ inputs.environment }}-${{ github.run_id }}
+          path: test-results/
+          retention-days: 14

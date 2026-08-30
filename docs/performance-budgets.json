@@ -1,0 +1,72 @@
+{
+  "phase": 17,
+  "coreWebVitals": {
+    "desktop": {
+      "cls": 0.1,
+      "inpMs": 200,
+      "lcpMs": 1800,
+      "ttfbMs": 800
+    },
+    "mobile": {
+      "cls": 0.1,
+      "inpMs": 200,
+      "lcpMs": 2500,
+      "ttfbMs": 1200
+    }
+  },
+  "routes": {
+    "/": {
+      "maxFirstLoadJsGzipBytes": 160000,
+      "maxFirestoreReadDocuments": 80,
+      "maxHtmlBytes": 180000,
+      "maxResponseMs": 4500,
+      "routeStatsKey": "/"
+    },
+    "/admin": {
+      "exception": "Authenticated admin shell requires Firebase client actions and bounded six-collection dashboard samples.",
+      "maxFirstLoadJsGzipBytes": 420000,
+      "maxFirestoreReadDocuments": 650,
+      "maxHtmlBytes": 320000,
+      "maxResponseMs": 5500,
+      "routeStatsKey": "/admin"
+    },
+    "/cart": {
+      "exception": "Authenticated cart actions require Firebase callable client code.",
+      "maxFirstLoadJsGzipBytes": 420000,
+      "maxFirestoreReadDocuments": 60,
+      "maxHtmlBytes": 240000,
+      "maxResponseMs": 5000,
+      "routeStatsKey": "/cart"
+    },
+    "/checkout": {
+      "exception": "Authenticated checkout actions require Firebase callable client code.",
+      "maxFirstLoadJsGzipBytes": 420000,
+      "maxFirestoreReadDocuments": 30,
+      "maxHtmlBytes": 260000,
+      "maxResponseMs": 5000,
+      "routeStatsKey": "/checkout"
+    },
+    "/product/[slug]": {
+      "exception": "Product purchase actions require Firebase callable client code; action buttons are lazy-loaded.",
+      "maxFirstLoadJsGzipBytes": 420000,
+      "maxFirestoreReadDocuments": 180,
+      "maxHtmlBytes": 260000,
+      "maxResponseMs": 5000,
+      "routeStatsKey": "/product/[slug]"
+    },
+    "/shop": {
+      "maxFirstLoadJsGzipBytes": 160000,
+      "maxFirestoreReadDocuments": 260,
+      "maxHtmlBytes": 220000,
+      "maxResponseMs": 4500,
+      "routeStatsKey": "/shop"
+    },
+    "/[...categoryPath]": {
+      "maxFirstLoadJsGzipBytes": 160000,
+      "maxFirestoreReadDocuments": 160,
+      "maxHtmlBytes": 220000,
+      "maxResponseMs": 4500,
+      "routeStatsKey": "/[...categoryPath]"
+    }
+  }
+}
