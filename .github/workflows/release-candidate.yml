@@ -52,6 +52,8 @@ jobs:
           cache: npm
           node-version: 22
       - run: npm ci
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
       - name: Audit protected environment without printing values
         run: node scripts/audit-production-config.mjs --environment "${{ inputs.environment }}"
       - name: Verify release candidate

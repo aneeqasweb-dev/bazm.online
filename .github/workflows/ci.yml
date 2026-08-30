@@ -23,4 +23,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
       - run: npm run verify
