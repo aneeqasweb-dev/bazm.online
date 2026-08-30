@@ -90,7 +90,10 @@ export default async function AdminPaymentsPage({
                     <td className="py-4 text-stone-300">{payment.orderId}</td>
                     <td className="py-4">
                       {currency.format(payment.amountMinor / 100)}
-                      <p className="text-xs text-stone-500">
+                      <p
+                        className="text-xs text-stone-500"
+                        data-refunded-minor={payment.refundedMinor}
+                      >
                         refunded {currency.format(payment.refundedMinor / 100)}
                       </p>
                     </td>

@@ -592,7 +592,7 @@ test("admin product through refund journey is accessible", async ({ page }) => {
   await expect(
     page.getByText(`sandbox-${fixture.paymentId}`, { exact: true }),
   ).toBeVisible();
-  await expect(page.getByText(/refunded\s+Rs\s*1,250\.00/)).toBeVisible();
+  await expect(page.locator('[data-refunded-minor="125000"]')).toBeVisible();
   await assertNoCriticalA11yViolations(page, "admin refund pages");
 });
 
