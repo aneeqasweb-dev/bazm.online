@@ -1,4 +1,8 @@
 import type { NextConfig } from "next";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const frontendDirectory = path.dirname(fileURLToPath(import.meta.url));
 
 const usesFirebaseEmulators =
   process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATORS === "true";
@@ -84,6 +88,10 @@ const privateCacheHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Dependencies are hoisted to the repository-level node_modules directory.
+  // Trace from the workspace root so Vercel includes server-only packages such
+  // as firebase-admin in the deployed functions.
+  outputFileTracingRoot: path.join(frontendDirectory, ".."),
   async headers() {
     return [
       { headers: securityHeaders, source: "/:path*" },
