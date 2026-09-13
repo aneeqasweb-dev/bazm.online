@@ -19,7 +19,10 @@ import RegisterPage from "@/app/(auth)/register/page";
 
 describe("auth forms before hydration", () => {
   it.each([
-    ["login", <LoginForm key="login" nextPath="/account" />],
+    [
+      "login",
+      <LoginForm key="login" nextPath="/account" resetComplete={false} />,
+    ],
     ["registration", <RegisterPage key="registration" />],
   ])(
     "keeps %s credentials out of URLs and prevents early submission",
