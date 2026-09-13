@@ -10,8 +10,10 @@ import {
 } from "@/components/auth/auth-shell";
 import { requestPasswordReset } from "@/lib/auth/auth-client";
 import { forgotPasswordSchema } from "@/lib/auth/auth-schema";
+import { useAuthReady } from "@/lib/auth/use-auth-ready";
 
 export default function ForgotPasswordPage() {
+  const ready = useAuthReady();
   const [emailError, setEmailError] = useState<string>();
   const [pending, setPending] = useState(false);
   const [complete, setComplete] = useState(false);
@@ -56,7 +58,12 @@ export default function ForgotPasswordPage() {
           </Link>
         </div>
       ) : (
-        <form className="mt-8 space-y-5" noValidate onSubmit={handleSubmit}>
+        <form
+          className="mt-8 space-y-5"
+          method="post"
+          noValidate
+          onSubmit={handleSubmit}
+        >
           <AuthField
             label="Email"
             name="email"
@@ -66,7 +73,7 @@ export default function ForgotPasswordPage() {
           />
           <button
             className="h-12 w-full rounded-full bg-amber-300 font-semibold text-stone-950 disabled:cursor-wait disabled:opacity-60"
-            disabled={pending}
+            disabled={!ready || pending}
             type="submit"
           >
             {pending ? "Sending…" : "Send reset link"}

@@ -16,6 +16,7 @@ import {
 } from "@/lib/auth/auth-client";
 import { getAuthErrorMessage } from "@/lib/auth/auth-errors";
 import { loginSchema } from "@/lib/auth/auth-schema";
+import { useAuthReady } from "@/lib/auth/use-auth-ready";
 
 type LoginFieldErrors = Partial<Record<"email" | "password", string>>;
 
@@ -29,6 +30,7 @@ export function LoginForm({
   resetComplete: boolean;
 }) {
   const router = useRouter();
+  const ready = useAuthReady();
   const [errors, setErrors] = useState<LoginFieldErrors>({});
   const [formError, setFormError] = useState<string>();
   const [pending, setPending] = useState<"email" | "google" | null>(null);
@@ -102,7 +104,12 @@ export function LoginForm({
         ) : null}
       </div>
 
-      <form className="mt-8 space-y-5" noValidate onSubmit={handleSubmit}>
+      <form
+        className="mt-8 space-y-5"
+        method="post"
+        noValidate
+        onSubmit={handleSubmit}
+      >
         <AuthField
           label="Email"
           name="email"
@@ -128,7 +135,7 @@ export function LoginForm({
         {formError ? <AuthMessage>{formError}</AuthMessage> : null}
         <button
           className="h-12 w-full rounded-full bg-amber-300 font-semibold text-stone-950 disabled:cursor-wait disabled:opacity-60"
-          disabled={pending !== null}
+          disabled={!ready || pending !== null}
           type="submit"
         >
           {pending === "email" ? "Signing in…" : "Sign in"}
@@ -138,7 +145,7 @@ export function LoginForm({
       {isGoogleAuthEnabled() ? (
         <button
           className="mt-3 h-12 w-full rounded-full border border-stone-700 font-semibold disabled:cursor-wait disabled:opacity-60"
-          disabled={pending !== null}
+          disabled={!ready || pending !== null}
           onClick={handleGoogleLogin}
           type="button"
         >

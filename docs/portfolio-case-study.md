@@ -65,7 +65,7 @@ zero-cost operating constraint.
 - Three categories and four original-image products with variants and inventory.
 - Cloudinary upload/delete verification and idempotent staging seed scripts.
 - Forty production routes compile successfully.
-- Thirty-three frontend unit tests currently pass alongside lint and strict
+- Thirty-five frontend unit tests currently pass alongside lint and strict
   TypeScript checks.
 
 ## Honest limitations

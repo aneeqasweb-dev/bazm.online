@@ -8,12 +8,14 @@ import {
   registerCustomer,
 } from "@/lib/auth/register-customer";
 import { registrationSchema } from "@/lib/auth/registration-schema";
+import { useAuthReady } from "@/lib/auth/use-auth-ready";
 
 type FieldErrors = Partial<
   Record<"name" | "email" | "password" | "confirmPassword", string>
 >;
 
 export default function RegisterPage() {
+  const ready = useAuthReady();
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string>();
   const [status, setStatus] = useState<"idle" | "submitting" | "complete">(
@@ -94,7 +96,12 @@ export default function RegisterPage() {
           Save favourites, checkout faster, and track every order.
         </p>
 
-        <form className="mt-8 space-y-5" noValidate onSubmit={handleSubmit}>
+        <form
+          className="mt-8 space-y-5"
+          method="post"
+          noValidate
+          onSubmit={handleSubmit}
+        >
           <Field
             label="Full name"
             name="name"
@@ -134,7 +141,7 @@ export default function RegisterPage() {
           ) : null}
           <button
             className="h-12 w-full rounded-full bg-amber-300 font-semibold text-stone-950 disabled:cursor-wait disabled:opacity-60"
-            disabled={status === "submitting"}
+            disabled={!ready || status === "submitting"}
             type="submit"
           >
             {status === "submitting" ? "Creating account…" : "Create account"}

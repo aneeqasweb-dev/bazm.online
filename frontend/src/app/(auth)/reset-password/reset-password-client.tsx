@@ -123,7 +123,12 @@ export function ResetPasswordClient({ code }: { code?: string }) {
           </Link>
         ) : null}
         {state === "ready" || state === "submitting" ? (
-          <form className="space-y-5" noValidate onSubmit={handleSubmit}>
+          <form
+            className="space-y-5"
+            method="post"
+            noValidate
+            onSubmit={handleSubmit}
+          >
             <AuthField
               label="New password"
               name="password"

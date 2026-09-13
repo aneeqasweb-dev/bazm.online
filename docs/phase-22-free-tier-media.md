@@ -130,6 +130,10 @@ expansion is optional for the initial four-product portfolio release.
   deployment protection token only for requests to the known preview host.
 - Frontend lint, 33 frontend unit tests, frontend type checking, Functions lint,
   28 Functions unit tests, static readiness, and the Vercel build passed.
+- Subsequent browser testing found that auth forms could submit before their
+  client handlers were attached. Login, registration, and recovery now use POST;
+  submission stays disabled until hydration. Two server-rendering regression
+  tests pass, bringing the frontend suite to 35 tests.
 - Owner administrator: `aneeqa.dev@gmail.com`; registration and email
   verification are required before the staging bootstrap can grant access.
 
