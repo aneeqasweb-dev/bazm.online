@@ -1,19 +1,13 @@
 "use client";
 
-import { FirebaseError } from "firebase/app";
-import { httpsCallable } from "firebase/functions";
-import {
-  getDownloadURL,
-  ref,
-  uploadBytes,
-  type FirebaseStorage,
-} from "firebase/storage";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { useState } from "react";
 
-import { getFirebaseClientServices } from "@/lib/firebase/client";
+import { callCommand } from "@/lib/commands/client";
+import { uploadMedia } from "@/lib/media/client";
+import { validateMediaFile } from "@/lib/media/policy";
 
 type ReviewImage = {
   path: string;
@@ -50,81 +44,34 @@ type ReviewItem = {
 };
 
 function errorMessage(error: unknown) {
-  return error instanceof FirebaseError
-    ? error.message.replace(/^.*?:\s*/, "")
-    : error instanceof Error
-      ? error.message
-      : "The review could not be saved.";
-}
-
-function safeFileName(name: string) {
-  return (
-    name
-      .toLowerCase()
-      .replace(/[^a-z0-9._-]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 80) || "review-image.webp"
-  );
-}
-
-async function imageDimensions(file: File) {
-  const url = URL.createObjectURL(file);
-  return new Promise<{ width: number; height: number }>((resolve) => {
-    const image = new window.Image();
-    image.onload = () => {
-      URL.revokeObjectURL(url);
-      resolve({
-        width: Math.max(1, image.naturalWidth),
-        height: Math.max(1, image.naturalHeight),
-      });
-    };
-    image.onerror = () => {
-      URL.revokeObjectURL(url);
-      resolve({ width: 1, height: 1 });
-    };
-    image.src = url;
-  });
+  return error instanceof Error
+    ? error.message
+    : "The review could not be saved.";
 }
 
 async function uploadReviewImages({
   files,
   productName,
-  storage,
-  userId,
 }: {
   files: File[];
   productName: string;
-  storage: FirebaseStorage;
-  userId: string;
 }) {
   if (files.length > 5) {
     throw new Error("Upload at most 5 review images.");
   }
-  const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
   const uploaded: ReviewImage[] = [];
   for (const [index, file] of files.entries()) {
-    if (!allowedTypes.has(file.type)) {
-      throw new Error("Review images must be JPEG, PNG, or WebP.");
-    }
-    if (file.size >= 3 * 1024 * 1024) {
-      throw new Error("Each review image must be below 3 MB.");
-    }
-    const path = `reviews/${userId}/${Date.now()}-${index}-${safeFileName(
-      file.name,
-    )}`;
-    const imageRef = ref(storage, path);
-    const [{ width, height }] = await Promise.all([
-      imageDimensions(file),
-      uploadBytes(imageRef, file, { contentType: file.type }),
-    ]);
+    const validationError = validateMediaFile(file, "review");
+    if (validationError) throw new Error(validationError);
+    const asset = await uploadMedia(file, "review");
     uploaded.push({
-      path,
-      url: await getDownloadURL(imageRef),
+      path: asset.path,
+      url: asset.url,
       alt: `Review image for ${productName}`.slice(0, 180),
-      width,
-      height,
-      contentType: file.type as ReviewImage["contentType"],
-      contentHash: `review-image-${file.lastModified}-${file.size}-${index}`,
+      width: asset.width,
+      height: asset.height,
+      contentType: asset.contentType,
+      contentHash: asset.contentHash,
       sortOrder: index,
     });
   }
@@ -150,9 +97,6 @@ function ReviewForm({ item }: { item: ReviewItem }) {
     setMessage(undefined);
     try {
       const form = new FormData(event.currentTarget);
-      const { auth, functions, storage } = getFirebaseClientServices();
-      const user = auth.currentUser;
-      if (!user) throw new Error("Sign in again before saving a review.");
       const files = form.getAll("images").filter((file): file is File => {
         return file instanceof File && file.size > 0;
       });
@@ -160,8 +104,6 @@ function ReviewForm({ item }: { item: ReviewItem }) {
         ? await uploadReviewImages({
             files,
             productName: item.productName,
-            storage,
-            userId: user.uid,
           })
         : undefined;
       const reviewInput = {
@@ -172,19 +114,13 @@ function ReviewForm({ item }: { item: ReviewItem }) {
       };
 
       if (existing) {
-        await httpsCallable(
-          functions,
-          "updateReview",
-        )({
+        await callCommand("updateReview", {
           reviewId: existing.id,
           input: reviewInput,
         });
         setMessage("Review updated and sent back to moderation.");
       } else {
-        await httpsCallable(
-          functions,
-          "createReview",
-        )({
+        await callCommand("createReview", {
           orderId: item.orderId,
           productId: item.productId,
           variantId: item.variantId,

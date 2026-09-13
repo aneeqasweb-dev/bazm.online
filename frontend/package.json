@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "npm run build --workspace @bazm/functions",
     "dev": "next dev",
+    "prebuild": "npm run build --workspace @bazm/functions",
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
@@ -13,6 +15,8 @@
   },
   "dependencies": {
     "@bazm/domain": "*",
+    "@bazm/functions": "*",
+    "cloudinary": "^2.11.0",
     "firebase": "^12.2.1",
     "firebase-admin": "13.10.0",
     "next": "16.3.3",

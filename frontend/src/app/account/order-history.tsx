@@ -1,12 +1,11 @@
 "use client";
 
 import { FirebaseError } from "firebase/app";
-import { httpsCallable } from "firebase/functions";
 import { useRouter } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";
 
 import { formatPkr } from "@/components/store/product-card";
-import { getFirebaseClientServices } from "@/lib/firebase/client";
+import { callCommand } from "@/lib/commands/client";
 
 type Order = {
   id: string;
@@ -99,8 +98,7 @@ export function OrderHistory({
   async function cancel(orderId: string) {
     setPending(orderId);
     try {
-      const { functions } = getFirebaseClientServices();
-      await httpsCallable(functions, "cancelMyOrder")({ orderId });
+      await callCommand("cancelMyOrder", { orderId });
       router.refresh();
     } finally {
       setPending(undefined);
@@ -128,11 +126,7 @@ export function OrderHistory({
     setReturnPending(order.id);
     setOrderMessage(order.id, "");
     try {
-      const { functions } = getFirebaseClientServices();
-      await httpsCallable(
-        functions,
-        "createReturn",
-      )({
+      await callCommand("createReturn", {
         orderId: order.id,
         items,
         customerNote: String(form.get("customerNote") ?? "").trim() || null,

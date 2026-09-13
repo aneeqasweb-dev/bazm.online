@@ -27,6 +27,11 @@ amount, currency, order ownership, and idempotency before state changes.
 | `NEXT_PUBLIC_FIREBASE_APP_ID`               | Browser  | Firebase client      | Firebase web app identity         |
 | `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID`       | Browser  | Analytics only       | Analytics stream identity         |
 | `NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY` | Browser  | Production App Check | Public App Check site key         |
+| `NEXT_PUBLIC_ENABLE_FIREBASE_APP_CHECK`     | Browser  | Optional             | Explicitly enables App Check      |
+| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`         | Browser  | Cloudinary delivery  | Public Cloudinary account name    |
+| `CLOUDINARY_API_KEY`                        | Server   | Cloudinary uploads   | Server-only Cloudinary API key    |
+| `CLOUDINARY_API_SECRET`                     | Secret   | Cloudinary uploads   | Server-only signing secret        |
+| `FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON`       | Secret   | Vercel server routes | Firebase Admin service account    |
 | `NEXT_PUBLIC_APP_URL`                       | Browser  | Production           | Email-action continuation origin  |
 | `NEXT_PUBLIC_ENABLE_GOOGLE_AUTH`            | Browser  | Optional Google auth | Provider UI/configuration switch  |
 | `NEXT_PUBLIC_USE_FIREBASE_EMULATORS`        | Browser  | Local only           | Explicit emulator routing switch  |
@@ -39,8 +44,13 @@ amount, currency, order ownership, and idempotency before state changes.
 | `APP_BASE_URL`                              | Server   | Cloud environments   | Trusted redirect/link origin      |
 
 Firebase Admin uses Application Default Credentials in managed Functions and the
-emulator. No service-account JSON variable or key file is part of the application
-contract.
+emulator. No service-account key file is stored in the repository.
+
+The free-tier Vercel architecture uses
+`FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON` because Vercel does not provide Google
+Application Default Credentials. Local development uses
+`GOOGLE_APPLICATION_CREDENTIALS` pointing to a private file outside the
+repository. Neither value may use a `NEXT_PUBLIC_` prefix.
 
 Google sign-in remains hidden and fails closed unless
 `NEXT_PUBLIC_ENABLE_GOOGLE_AUTH=true`. Before enabling it, the Google provider and

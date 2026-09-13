@@ -34,18 +34,19 @@ export const listProductCategories = cache(
   async (): Promise<ProductCategoryOption[]> => {
     const snapshot = await getServerFirestore()
       .collection("categories")
-      .where("status", "==", "ACTIVE")
       .orderBy("sortOrder")
       .limit(100)
       .get();
-    return snapshot.docs.map((document) => {
-      const category = document.data() as CategoryDocument;
-      return {
-        id: document.id,
-        name: category.name,
-        status: category.status,
-        depth: category.depth,
-      };
-    });
+    return snapshot.docs
+      .map((document) => {
+        const category = document.data() as CategoryDocument;
+        return {
+          id: document.id,
+          name: category.name,
+          status: category.status,
+          depth: category.depth,
+        };
+      })
+      .filter((category) => category.status === "ACTIVE");
   },
 );

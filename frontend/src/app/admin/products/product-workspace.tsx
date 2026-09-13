@@ -1,7 +1,5 @@
 "use client";
 
-import { FirebaseError } from "firebase/app";
-import { httpsCallable } from "firebase/functions";
 import { useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -10,7 +8,7 @@ import type {
   AdminProduct,
   ProductCategoryOption,
 } from "@/lib/products/server";
-import { getFirebaseClientServices } from "@/lib/firebase/client";
+import { callCommand } from "@/lib/commands/client";
 import { uploadProductMedia } from "@/lib/products/media-client";
 
 export type ProductWorkspaceProduct = Pick<
@@ -19,11 +17,9 @@ export type ProductWorkspaceProduct = Pick<
 >;
 
 function errorMessage(error: unknown) {
-  return error instanceof FirebaseError
-    ? error.message.replace(/^.*?:\s*/, "")
-    : error instanceof Error
-      ? error.message
-      : "The product could not be saved.";
+  return error instanceof Error
+    ? error.message
+    : "The product could not be saved.";
 }
 
 export function ProductWorkspace({
@@ -66,9 +62,7 @@ export function ProductWorkspace({
         file,
         String(form.get("imageAlt") ?? ""),
       );
-      const { functions } = getFirebaseClientServices();
-      const create = httpsCallable(functions, "createProduct");
-      const result = await create({
+      const result = await callCommand<{ id: string }>("createProduct", {
         name: form.get("name"),
         slug: form.get("slug"),
         description: form.get("description"),
@@ -92,7 +86,7 @@ export function ProductWorkspace({
           description: String(form.get("seoDescription") ?? "") || null,
         },
       });
-      const id = (result.data as { id: string }).id;
+      const id = result.id;
       setSelectedProductId(id);
       setMessage("Draft created. Add a variant, then publish when ready.");
       event.currentTarget.reset();
@@ -110,9 +104,7 @@ export function ProductWorkspace({
     setMessage(undefined);
     const form = new FormData(event.currentTarget);
     try {
-      const { functions } = getFirebaseClientServices();
-      const createVariant = httpsCallable(functions, "createProductVariant");
-      await createVariant({
+      await callCommand("createProductVariant", {
         productId: form.get("productId"),
         variant: {
           sku: form.get("sku"),
@@ -147,11 +139,7 @@ export function ProductWorkspace({
     setPending(true);
     setMessage(undefined);
     try {
-      const { functions } = getFirebaseClientServices();
-      await httpsCallable(
-        functions,
-        "setProductStatus",
-      )({ id, status: nextStatus });
+      await callCommand("setProductStatus", { id, status: nextStatus });
       setMessage(`Product ${nextStatus.toLowerCase()}.`);
       router.refresh();
     } catch (error) {

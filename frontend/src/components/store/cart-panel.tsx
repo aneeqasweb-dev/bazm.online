@@ -2,12 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { httpsCallable } from "firebase/functions";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { formatPkr } from "@/components/store/product-card";
-import { getFirebaseClientServices } from "@/lib/firebase/client";
+import { callCommand } from "@/lib/commands/client";
 
 export type CartLine = {
   variantId: string;
@@ -41,11 +40,10 @@ export function CartPanel({ items }: { items: CartLine[] }) {
     setPendingId(variantId);
     setMessage(undefined);
     try {
-      const { functions } = getFirebaseClientServices();
-      await httpsCallable(
-        functions,
+      await callCommand(
         name,
-      )(quantity === undefined ? { variantId } : { variantId, quantity });
+        quantity === undefined ? { variantId } : { variantId, quantity },
+      );
       router.refresh();
     } catch {
       setMessage("Your cart changed. Refresh and try that action again.");

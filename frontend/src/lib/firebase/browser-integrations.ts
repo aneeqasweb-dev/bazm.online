@@ -31,11 +31,13 @@ async function initializeAppCheckIntegration(): Promise<AppCheck | null> {
     return null;
   }
 
+  if (env.NEXT_PUBLIC_ENABLE_FIREBASE_APP_CHECK !== "true") return null;
+
   const { app } = getFirebaseClientServices();
   const siteKey = env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY;
-  if (!siteKey) {
-    throw new Error("Firebase App Check configuration is required.");
-  }
+  // When explicitly enabled, production configuration is validated by
+  // getFirebaseBrowserIntegrationEnv before reaching this point.
+  if (!siteKey) return null;
 
   const appCheck = initializeAppCheck(app, {
     provider: new ReCaptchaEnterpriseProvider(siteKey),

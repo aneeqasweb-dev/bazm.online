@@ -114,7 +114,7 @@ export function ProfileForm({
           className={`mt-2 text-sm ${errors.avatar ? "text-red-300" : "text-stone-500"}`}
           id="avatar-description"
         >
-          {errors.avatar ?? "JPEG, PNG, or WebP; smaller than 5 MB."}
+          {errors.avatar ?? "JPEG, PNG, or WebP; no larger than 4 MB."}
         </p>
       </div>
       {avatarPath ? (

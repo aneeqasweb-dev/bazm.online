@@ -74,3 +74,17 @@ Suggested initial keys:
 - `payments.provider`
 - `email.sender`
 - `analytics.consent`
+
+## Staging administrator bootstrap
+
+After Firebase Authentication is enabled, register and verify one account
+through the application. Bootstrap that first administrator with:
+
+```bash
+npm run admin:bootstrap:staging -- --email user@example.com --confirm-super-admin
+```
+
+The command refuses non-staging projects, requires an existing verified account
+and Firestore profile, refuses to replace a different existing super admin,
+writes an audit record, and revokes old sessions after updating claims. All
+later role changes must use the audited admin interface.

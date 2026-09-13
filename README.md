@@ -1,14 +1,40 @@
 # Bazm
 
-Bazm is a Pakistan-first fashion e-commerce platform built with Next.js and
-Firebase. The repository is organized as a monorepo so frontend, trusted
-backend code, Firebase policy, tests, and documentation can evolve independently.
+Bazm is a Pakistan-first fashion e-commerce portfolio platform built with
+Next.js, TypeScript, Firebase, and Cloudinary. It demonstrates a complete
+storefront and operations workflow while remaining deployable on free tiers.
+
+## Portfolio highlights
+
+- Responsive catalog, filters, product detail, wishlist, cart, and checkout.
+- Firebase email/password authentication with verified, server-managed sessions.
+- Role-based CUSTOMER, STAFF, ADMIN, and SUPER_ADMIN authorization.
+- Product, category, inventory, order, coupon, review, return, and support tools.
+- Transaction-safe inventory reservations, order totals, and idempotent actions.
+- Cloudinary uploads with signature checks, size limits, ownership boundaries,
+  reference-aware cleanup, and responsive image delivery.
+- Firebase emulator integration tests plus unit, accessibility, security, and
+  production-build checks.
+
+## Free-tier architecture
+
+```text
+Browser → Next.js App Router on Vercel
+              ├── Firebase Authentication
+              ├── Cloud Firestore
+              └── Cloudinary image storage/delivery
+```
+
+Authenticated Next.js route handlers perform trusted mutations. The historical
+Firebase Functions and Storage implementation remains available for emulator
+testing and demonstrates the earlier serverless architecture, but the deployed
+portfolio does not require Blaze billing.
 
 ## Repository layout
 
 ```text
-frontend/   Next.js App Router application
-functions/  Firebase Cloud Functions (TypeScript, Node.js 22 runtime)
+frontend/   Next.js application and authenticated server route handlers
+functions/  Reusable domain services plus historical Firebase Functions adapters
 firebase/   Firestore indexes and deny-by-default security rules
 tests/      Cross-workspace and end-to-end tests
 docs/       Architecture and development documentation
@@ -27,8 +53,9 @@ npm install
 npm run dev
 ```
 
-Open <http://localhost:3000>. The local environment file is configured for the
-Firebase demo project and contains no production credentials.
+Open <http://localhost:3000>. Copy `frontend/.env.example` to an ignored
+`frontend/.env.local` and configure either the local emulators or a dedicated
+staging project. Never commit service-account credentials.
 
 ## Run quality checks
 
@@ -70,15 +97,20 @@ on the current development machine; Auth, Functions, and Storage use `9099`,
 `functions/.secret.local` file with dummy emulator-only payment and email values
 when one does not already exist; it never overwrites an existing local file.
 
-## Connect a real Firebase project later
+## Staging setup
 
-1. Create separate development, staging, and production Firebase projects.
+1. Create separate staging and production Firebase projects.
 2. Run `npx firebase-tools@latest use --add` from this directory.
 3. Copy `frontend/.env.example` to `frontend/.env.local` and supply the selected
    Firebase web app configuration.
 4. Never commit service-account keys or `.env.local`.
 
-No cloud project is created or deployed by the initial setup.
+The repository includes staging-only, repeat-safe catalog seed commands. They
+refuse unknown project IDs and never delete existing records:
+
+```bash
+npm run seed:staging
+```
 
 ## Planning documents
 
@@ -96,6 +128,8 @@ No cloud project is created or deployed by the initial setup.
 - [Phase 4 completion record](docs/phase-4-completion.md)
 - [Phase 20 production-preparation record](docs/phase-20-production-preparation.md)
 - [Phase 21 deployment record](docs/phase-21-deployment.md)
+- [Phase 22 free-tier media migration](docs/phase-22-free-tier-media.md)
+- [Portfolio case study](docs/portfolio-case-study.md)
 - [Provider readiness](docs/provider-readiness.md)
 - [Operations runbook](docs/operations-runbook.md)
 - [Data migration and recovery](docs/data-migration-and-recovery.md)

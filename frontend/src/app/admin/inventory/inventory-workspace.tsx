@@ -1,7 +1,5 @@
 "use client";
 
-import { FirebaseError } from "firebase/app";
-import { httpsCallable } from "firebase/functions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, type FormEvent } from "react";
@@ -11,7 +9,7 @@ import type {
   AdminInventoryItem,
   InventoryVariantOption,
 } from "@/lib/inventory/server";
-import { getFirebaseClientServices } from "@/lib/firebase/client";
+import { callCommand } from "@/lib/commands/client";
 
 type InventoryPage = { items: AdminInventoryItem[]; nextCursor: string | null };
 type HistoryPage = {
@@ -20,11 +18,9 @@ type HistoryPage = {
 };
 
 function errorMessage(error: unknown) {
-  return error instanceof FirebaseError
-    ? error.message.replace(/^.*?:\s*/, "")
-    : error instanceof Error
-      ? error.message
-      : "The inventory operation could not be completed.";
+  return error instanceof Error
+    ? error.message
+    : "The inventory operation could not be completed.";
 }
 
 function pageHref(input: {
@@ -73,11 +69,7 @@ export function InventoryWorkspace({
     setPending(true);
     setMessage(undefined);
     try {
-      const { functions } = getFirebaseClientServices();
-      await httpsCallable(
-        functions,
-        "receiveInventory",
-      )({
+      await callCommand("receiveInventory", {
         productId: selected.productId,
         variantId: selected.variantId,
         sku: selected.sku,
@@ -102,7 +94,6 @@ export function InventoryWorkspace({
     setPending(true);
     setMessage(undefined);
     try {
-      const { functions } = getFirebaseClientServices();
       const name =
         operation === "RETURN"
           ? "restoreInventoryReturn"
@@ -117,7 +108,7 @@ export function InventoryWorkspace({
               reason: form.get("reason"),
             }
           : { sku: form.get("sku"), quantity, reason: form.get("reason") };
-      await httpsCallable(functions, name)(payload);
+      await callCommand(name, payload);
       event.currentTarget.reset();
       setMessage("Stock movement recorded in the ledger.");
       router.refresh();

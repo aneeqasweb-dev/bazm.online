@@ -96,10 +96,10 @@ function assertOwnedReviewImages(
   userId: string,
   images: z.infer<typeof createReviewInputSchema>["images"],
 ) {
-  const prefix = `reviews/${userId}/`;
+  const prefixes = [`reviews/${userId}/`, `bazm/reviews/${userId}/`];
   for (const image of images) {
     if (
-      !image.path.startsWith(prefix) ||
+      !prefixes.some((prefix) => image.path.startsWith(prefix)) ||
       image.path.includes("..") ||
       image.path.includes("//")
     ) {

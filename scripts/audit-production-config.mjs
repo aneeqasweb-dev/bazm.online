@@ -9,8 +9,13 @@ const requestedEnvironment = process.argv.find((value, index, values) =>
 );
 const environments = new Set(["staging", "production"]);
 
-const publicVariables = [
+const frontendVariables = [
+  "CLOUDINARY_API_KEY",
+  "CLOUDINARY_API_SECRET",
+  "FIREBASE_ADMIN_SERVICE_ACCOUNT_JSON",
   "NEXT_PUBLIC_APP_URL",
+  "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME",
+  "NEXT_PUBLIC_ENABLE_FIREBASE_APP_CHECK",
   "NEXT_PUBLIC_ENABLE_GOOGLE_AUTH",
   "NEXT_PUBLIC_FIREBASE_API_KEY",
   "NEXT_PUBLIC_FIREBASE_APP_ID",
@@ -22,8 +27,10 @@ const publicVariables = [
   "NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY",
   "NEXT_PUBLIC_USE_FIREBASE_EMULATORS",
 ];
-const requiredPublicVariables = publicVariables.filter(
-  (name) => name !== "NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID",
+const requiredFrontendVariables = frontendVariables.filter(
+  (name) =>
+    name !== "NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID" &&
+    name !== "NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY",
 );
 const serverVariables = [
   "APP_URL",
@@ -71,8 +78,8 @@ function assertTemplates() {
   const serverNames = envNames(serverTemplate).sort();
   assert.deepEqual(
     clientNames,
-    publicVariables.sort(),
-    "Client environment template drifted from the approved public allowlist",
+    frontendVariables.sort(),
+    "Frontend environment template drifted from the approved allowlist",
   );
   assert.deepEqual(
     serverNames,
@@ -162,7 +169,7 @@ function assertRuntimeEnvironment(environment) {
     environments.has(environment),
     "--environment must be staging or production",
   );
-  for (const name of requiredPublicVariables) required(name);
+  for (const name of requiredFrontendVariables) required(name);
   for (const name of managedSecrets) {
     assert.equal(
       process.env[name],
@@ -175,6 +182,15 @@ function assertRuntimeEnvironment(environment) {
     "false",
     "Release builds must not use Firebase emulators",
   );
+  assert.ok(
+    ["true", "false"].includes(
+      required("NEXT_PUBLIC_ENABLE_FIREBASE_APP_CHECK"),
+    ),
+    "NEXT_PUBLIC_ENABLE_FIREBASE_APP_CHECK must be true or false",
+  );
+  if (process.env.NEXT_PUBLIC_ENABLE_FIREBASE_APP_CHECK === "true") {
+    required("NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY");
+  }
   const appUrl = new URL(required("NEXT_PUBLIC_APP_URL"));
   assert.equal(appUrl.protocol, "https:", "Release URL must use HTTPS");
   assert.equal(appUrl.pathname, "/", "Release URL must be an origin");
@@ -199,6 +215,6 @@ console.log(
     environment: requestedEnvironment ?? "templates",
     managedSecrets,
     ok: true,
-    publicVariableCount: publicVariables.length,
+    frontendVariableCount: frontendVariables.length,
   }),
 );

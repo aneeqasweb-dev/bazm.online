@@ -4,13 +4,13 @@ import {
   createCategoryInputSchema,
   updateCategoryInputSchema,
 } from "@bazm/domain";
-import { FirebaseError } from "firebase/app";
-import { httpsCallable } from "firebase/functions";
 import { useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 import type { CategorySummary } from "@/lib/categories/server";
-import { getFirebaseClientServices } from "@/lib/firebase/client";
+import { callCommand } from "@/lib/commands/client";
+import { uploadMedia } from "@/lib/media/client";
+import { validateMediaFile } from "@/lib/media/policy";
 
 type FormErrors = Partial<
   Record<"name" | "slug" | "parentId" | "image" | "seo", string>
@@ -65,9 +65,9 @@ function toDraft(category?: CategorySummary): CategoryDraft {
 }
 
 function formatFunctionError(error: unknown) {
-  if (error instanceof FirebaseError)
-    return error.message.replace(/^.*?:\s*/, "");
-  return "We could not save this category. Refresh and try again.";
+  return error instanceof Error
+    ? error.message
+    : "We could not save this category. Refresh and try again.";
 }
 
 function categoryIndent(depth: number) {
@@ -84,6 +84,7 @@ export function CategoryWorkspace({
   const [draft, setDraft] = useState<CategoryDraft>(emptyDraft);
   const [errors, setErrors] = useState<FormErrors>({});
   const [pending, setPending] = useState(false);
+  const [imagePending, setImagePending] = useState(false);
   const [notice, setNotice] = useState<string>();
   const [failure, setFailure] = useState<string>();
   const editing = categories.find((category) => category.id === editingId);
@@ -114,6 +115,38 @@ export function CategoryWorkspace({
     setEditingId(null);
     setDraft(emptyDraft);
     setErrors({});
+  }
+
+  async function uploadCategoryImage(file: File) {
+    const validationError = validateMediaFile(file, "category");
+    if (validationError) {
+      setErrors((current) => ({ ...current, image: validationError }));
+      return;
+    }
+    setImagePending(true);
+    setErrors((current) => ({ ...current, image: undefined }));
+    setFailure(undefined);
+    try {
+      const asset = await uploadMedia(file, "category");
+      setDraft((current) => ({
+        ...current,
+        imagePath: asset.path,
+        imageUrl: asset.url,
+        imageAlt: current.imageAlt || `${current.name || "Category"} image`,
+        imageWidth: String(asset.width),
+        imageHeight: String(asset.height),
+        imageType: asset.contentType,
+        imageHash: asset.contentHash,
+      }));
+    } catch (error) {
+      setFailure(
+        error instanceof Error
+          ? error.message
+          : "The image could not be uploaded.",
+      );
+    } finally {
+      setImagePending(false);
+    }
   }
 
   function parseInput() {
@@ -170,14 +203,17 @@ export function CategoryWorkspace({
 
     setPending(true);
     try {
-      const { functions } = getFirebaseClientServices();
       if (editingId) {
-        const updateCategory = httpsCallable(functions, "updateCategory");
-        await updateCategory({ id: editingId, input: parsed.data });
+        await callCommand("updateCategory", {
+          id: editingId,
+          input: parsed.data,
+        });
         setNotice("Category updated.");
       } else {
-        const createCategory = httpsCallable(functions, "createCategory");
-        await createCategory({ ...parsed.data, sortOrder: categories.length });
+        await callCommand("createCategory", {
+          ...parsed.data,
+          sortOrder: categories.length,
+        });
         setNotice(
           "Draft category created. Activate it when the hierarchy is ready.",
         );
@@ -196,9 +232,7 @@ export function CategoryWorkspace({
     setNotice(undefined);
     setFailure(undefined);
     try {
-      const { functions } = getFirebaseClientServices();
-      const updateStatus = httpsCallable(functions, "setCategoryStatus");
-      await updateStatus({ id, status });
+      await callCommand("setCategoryStatus", { id, status });
       setNotice(`Category ${status.toLowerCase()}.`);
       router.refresh();
     } catch (error) {
@@ -226,9 +260,7 @@ export function CategoryWorkspace({
     setNotice(undefined);
     setFailure(undefined);
     try {
-      const { functions } = getFirebaseClientServices();
-      const reorderCategories = httpsCallable(functions, "reorderCategories");
-      await reorderCategories({
+      await callCommand("reorderCategories", {
         parentId: category.parentId,
         categoryIds: nextOrder.map((item) => item.id),
       });
@@ -401,7 +433,24 @@ export function CategoryWorkspace({
               Image fields (optional)
             </summary>
             <div className="mt-4 grid gap-3">
-              <Field error={errors.image} label="Storage path">
+              <Field error={errors.image} label="Upload category image">
+                <input
+                  accept="image/jpeg,image/png,image/webp"
+                  className="field"
+                  disabled={imagePending}
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) void uploadCategoryImage(file);
+                  }}
+                  type="file"
+                />
+              </Field>
+              <p className="text-xs text-stone-500">
+                {imagePending
+                  ? "Uploading and validating image…"
+                  : "JPEG, PNG, or WebP; no larger than 4 MB."}
+              </p>
+              <Field error={errors.image} label="Provider asset path">
                 <input
                   className="field"
                   onChange={(event) => change("imagePath", event.target.value)}

@@ -32,3 +32,4 @@ functions/.secret.local
 # Logs and local TypeScript state
 *.log
 *.tsbuildinfo
+.vercel

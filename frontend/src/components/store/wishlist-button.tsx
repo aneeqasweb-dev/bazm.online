@@ -1,9 +1,8 @@
 "use client";
 
-import { httpsCallable } from "firebase/functions";
 import { useState } from "react";
 
-import { getFirebaseClientServices } from "@/lib/firebase/client";
+import { callCommand } from "@/lib/commands/client";
 
 export function WishlistButton({
   productId,
@@ -19,11 +18,9 @@ export function WishlistButton({
     setPending(true);
     setMessage(undefined);
     try {
-      const { functions } = getFirebaseClientServices();
-      await httpsCallable(
-        functions,
-        active ? "removeWishlistItem" : "addWishlistItem",
-      )({ productId });
+      await callCommand(active ? "removeWishlistItem" : "addWishlistItem", {
+        productId,
+      });
       setActive(!active);
     } catch {
       setMessage("Sign in to update your wishlist.");

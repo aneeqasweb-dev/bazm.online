@@ -15,6 +15,18 @@ export type CoreListQueryDefinition = {
  */
 export const coreListQueryDefinitions = [
   {
+    name: "all-orders-for-customer",
+    collection: "orders",
+    filters: ["userId"],
+    sort: { field: "placedAt", direction: "DESCENDING" },
+  },
+  {
+    name: "all-support-tickets-for-customer",
+    collection: "supportTickets",
+    filters: ["userId"],
+    sort: { field: "updatedAt", direction: "DESCENDING" },
+  },
+  {
     name: "active-users-by-role",
     collection: "users",
     filters: ["isActive", "role"],
@@ -60,6 +72,12 @@ export const coreListQueryDefinitions = [
     name: "active-category-children",
     collection: "categories",
     filters: ["status", "parentId"],
+    sort: { field: "sortOrder", direction: "ASCENDING" },
+  },
+  {
+    name: "all-active-categories",
+    collection: "categories",
+    filters: ["status"],
     sort: { field: "sortOrder", direction: "ASCENDING" },
   },
   {

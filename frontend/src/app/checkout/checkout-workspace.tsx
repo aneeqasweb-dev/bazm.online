@@ -1,11 +1,9 @@
 "use client";
 
-import { FirebaseError } from "firebase/app";
-import { httpsCallable } from "firebase/functions";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
-import { getFirebaseClientServices } from "@/lib/firebase/client";
+import { callCommand } from "@/lib/commands/client";
 
 type Address = {
   id: string;
@@ -19,11 +17,9 @@ type Address = {
 };
 
 function errorMessage(error: unknown) {
-  return error instanceof FirebaseError
-    ? error.message.replace(/^.*?:\s*/, "")
-    : error instanceof Error
-      ? error.message
-      : "Checkout could not be completed.";
+  return error instanceof Error
+    ? error.message
+    : "Checkout could not be completed.";
 }
 
 export function CheckoutWorkspace({ addresses }: { addresses: Address[] }) {
@@ -36,11 +32,7 @@ export function CheckoutWorkspace({ addresses }: { addresses: Address[] }) {
     setMessage(undefined);
     try {
       const form = new FormData(event.currentTarget);
-      const { functions } = getFirebaseClientServices();
-      await httpsCallable(
-        functions,
-        "createAddress",
-      )({
+      await callCommand("createAddress", {
         label: form.get("label"),
         recipientName: form.get("recipientName"),
         phone: form.get("phone"),
@@ -65,34 +57,30 @@ export function CheckoutWorkspace({ addresses }: { addresses: Address[] }) {
     setMessage(undefined);
     try {
       const form = new FormData(event.currentTarget);
-      const { functions } = getFirebaseClientServices();
       const paymentMethod = form.get("paymentMethod");
-      const result = await httpsCallable(
-        functions,
+      const result = await callCommand<{ ok: true; orderId: string }>(
         "createCheckout",
-      )({
-        idempotencyKey: crypto.randomUUID().replaceAll("-", ""),
-        shippingAddressId: form.get("shippingAddressId"),
-        billingAddressId: null,
-        couponCode:
-          String(form.get("couponCode") ?? "")
-            .trim()
-            .toUpperCase() || null,
-        deliveryMethod: form.get("deliveryMethod"),
-        paymentMethod,
-        customerNote: String(form.get("customerNote") ?? "").trim() || null,
-      });
-      const orderId = (result.data as { orderId: string }).orderId;
+        {
+          idempotencyKey: crypto.randomUUID().replaceAll("-", ""),
+          shippingAddressId: form.get("shippingAddressId"),
+          billingAddressId: null,
+          couponCode:
+            String(form.get("couponCode") ?? "")
+              .trim()
+              .toUpperCase() || null,
+          deliveryMethod: form.get("deliveryMethod"),
+          paymentMethod,
+          customerNote: String(form.get("customerNote") ?? "").trim() || null,
+        },
+      );
+      const orderId = result.orderId;
       if (paymentMethod === "CARD") {
-        const payment = await httpsCallable<
-          { orderId: string },
-          { redirectUrl: string | null }
-        >(
-          functions,
-          "createPaymentAttempt",
-        )({ orderId });
-        if (payment.data.redirectUrl) {
-          window.location.assign(payment.data.redirectUrl);
+        const payment = await callCommand<{
+          ok: true;
+          redirectUrl: string | null;
+        }>("createPaymentAttempt", { orderId });
+        if (payment.redirectUrl) {
+          window.location.assign(payment.redirectUrl);
           return;
         }
       }

@@ -6,6 +6,8 @@ import {
   confirmPasswordReset,
   GoogleAuthProvider,
   reload,
+  sendEmailVerification as sendFirebaseEmailVerification,
+  sendPasswordResetEmail,
   setPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -13,30 +15,24 @@ import {
   verifyPasswordResetCode,
   type User,
 } from "firebase/auth";
-import { httpsCallable } from "firebase/functions";
 
 import { getFirebaseClientEnv } from "@/lib/env/client";
 import { getFirebaseClientServices } from "@/lib/firebase/client";
 
 import type { LoginInput } from "./auth-schema";
+import {
+  completeRegistration,
+  synchronizeAuthorization,
+  type AuthorizationResult,
+} from "./authorization-client";
 import { createServerSession, deleteServerSession } from "./session-client";
 
-type AuthorizationResult = {
-  ok: true;
-  role: "CUSTOMER" | "STAFF" | "ADMIN" | "SUPER_ADMIN";
-  emailVerified: boolean;
-};
-
 async function synchronizeAndCreateSession(user: User) {
-  const { functions } = getFirebaseClientServices();
-  const synchronizeAuthorization = httpsCallable<
-    Record<string, never>,
-    AuthorizationResult
-  >(functions, "synchronizeAuthorization");
-  const authorization = await synchronizeAuthorization({});
+  const authorization: AuthorizationResult =
+    await synchronizeAuthorization(user);
   const idToken = await user.getIdToken(true);
   await createServerSession(idToken);
-  return authorization.data;
+  return authorization;
 }
 
 export async function loginWithEmail(input: LoginInput) {
@@ -72,18 +68,15 @@ export async function loginWithGoogle() {
     throw new Error("GOOGLE_AUTH_DISABLED");
   }
 
-  const { auth, functions } = getFirebaseClientServices();
+  const { auth } = getFirebaseClientServices();
   await setPersistence(auth, browserLocalPersistence);
   const credential = await signInWithPopup(auth, new GoogleAuthProvider());
 
   try {
-    const completeRegistration = httpsCallable<{ name: string }, { ok: true }>(
-      functions,
-      "completeRegistration",
+    await completeRegistration(
+      credential.user,
+      credential.user.displayName?.trim() || "Bazm customer",
     );
-    await completeRegistration({
-      name: credential.user.displayName?.trim() || "Bazm customer",
-    });
     return await synchronizeAndCreateSession(credential.user);
   } catch (error) {
     await signOut(auth).catch(() => undefined);
@@ -98,17 +91,13 @@ export async function logout() {
 }
 
 export async function sendVerificationEmail() {
-  const { auth, functions } = getFirebaseClientServices();
+  const { auth } = getFirebaseClientServices();
   await auth.authStateReady();
   if (!auth.currentUser) {
     throw new Error("AUTHENTICATION_REQUIRED");
   }
 
-  const requestVerification = httpsCallable<
-    Record<string, never>,
-    { ok: true }
-  >(functions, "sendVerificationEmail");
-  await requestVerification({});
+  await sendFirebaseEmailVerification(auth.currentUser);
 }
 
 export async function applyEmailVerificationCode(code: string) {
@@ -125,12 +114,7 @@ export async function applyEmailVerificationCode(code: string) {
 }
 
 export async function requestPasswordReset(email: string) {
-  const { functions } = getFirebaseClientServices();
-  const requestReset = httpsCallable<{ email: string }, { ok: true }>(
-    functions,
-    "requestPasswordResetEmail",
-  );
-  await requestReset({ email });
+  await sendPasswordResetEmail(getFirebaseClientServices().auth, email);
 }
 
 export async function inspectPasswordResetCode(code: string) {

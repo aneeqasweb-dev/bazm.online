@@ -4,6 +4,44 @@
   "private": true,
   "type": "module",
   "main": "lib/index.js",
+  "exports": {
+    "./orders": {
+      "types": "./src/orders/order-service.ts",
+      "default": "./lib/orders/order-service.js"
+    },
+    "./payments": {
+      "types": "./src/payments/payment-service.ts",
+      "default": "./lib/payments/payment-service.js"
+    },
+    "./returns": {
+      "types": "./src/returns/return-service.ts",
+      "default": "./lib/returns/return-service.js"
+    },
+    "./reviews": {
+      "types": "./src/reviews/review-service.ts",
+      "default": "./lib/reviews/review-service.js"
+    },
+    "./crm": {
+      "types": "./src/crm/crm-service.ts",
+      "default": "./lib/crm/crm-service.js"
+    },
+    "./admin": {
+      "types": "./src/admin/admin-service.ts",
+      "default": "./lib/admin/admin-service.js"
+    },
+    "./categories": {
+      "types": "./src/categories/category-service.ts",
+      "default": "./lib/categories/category-service.js"
+    },
+    "./inventory": {
+      "types": "./src/inventory/inventory-service.ts",
+      "default": "./lib/inventory/inventory-service.js"
+    },
+    "./products": {
+      "types": "./src/products/product-service.ts",
+      "default": "./lib/products/product-service.js"
+    }
+  },
   "engines": {
     "node": ">=22 <25"
   },

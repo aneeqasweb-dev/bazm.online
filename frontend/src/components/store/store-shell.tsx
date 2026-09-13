@@ -17,20 +17,20 @@ export function StoreShell({ children }: { children: React.ReactNode }) {
             <Link className="hover:text-amber-200" href="/shop">
               Shop
             </Link>
-            <Link className="hover:text-amber-200" href="/shop?q=women">
-              Women
+            <Link className="hover:text-amber-200" href="/formal-wear">
+              Formal Wear
             </Link>
-            <Link className="hover:text-amber-200" href="/shop?q=men">
-              Men
+            <Link className="hover:text-amber-200" href="/mens-wear">
+              Men&apos;s Wear
             </Link>
-            <Link className="hover:text-amber-200" href="/shop?q=kids">
-              Kids
+            <Link className="hover:text-amber-200" href="/accessories">
+              Accessories
             </Link>
           </div>
           <div className="flex items-center gap-3 text-sm">
             <Link
               aria-label="Search the catalog"
-              className="rounded-full border border-stone-700 px-3 py-2 hover:border-amber-300"
+              className="hidden rounded-full border border-stone-700 px-3 py-2 hover:border-amber-300 sm:inline-flex"
               href="/shop"
             >
               Search
@@ -65,14 +65,14 @@ export function StoreShell({ children }: { children: React.ReactNode }) {
           <Link className="shrink-0 hover:text-amber-200" href="/shop">
             Shop
           </Link>
-          <Link className="shrink-0 hover:text-amber-200" href="/shop?q=women">
-            Women
+          <Link className="shrink-0 hover:text-amber-200" href="/formal-wear">
+            Formal Wear
           </Link>
-          <Link className="shrink-0 hover:text-amber-200" href="/shop?q=men">
-            Men
+          <Link className="shrink-0 hover:text-amber-200" href="/mens-wear">
+            Men&apos;s Wear
           </Link>
-          <Link className="shrink-0 hover:text-amber-200" href="/shop?q=kids">
-            Kids
+          <Link className="shrink-0 hover:text-amber-200" href="/accessories">
+            Accessories
           </Link>
         </nav>
       </header>

@@ -9,6 +9,9 @@ const firebaseClientEnvSchema = z.object({
   NEXT_PUBLIC_FIREBASE_APP_ID: z.string().min(1),
   NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: z.string().min(1).optional(),
   NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY: z.string().min(1).optional(),
+  NEXT_PUBLIC_ENABLE_FIREBASE_APP_CHECK: z
+    .enum(["true", "false"])
+    .default("false"),
   NEXT_PUBLIC_APP_URL: z.url().optional(),
   NEXT_PUBLIC_ENABLE_GOOGLE_AUTH: z.enum(["true", "false"]).default("false"),
   NEXT_PUBLIC_USE_FIREBASE_EMULATORS: z
@@ -34,6 +37,8 @@ export function getFirebaseClientEnv(): FirebaseClientEnv {
       process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
     NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY:
       process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY,
+    NEXT_PUBLIC_ENABLE_FIREBASE_APP_CHECK:
+      process.env.NEXT_PUBLIC_ENABLE_FIREBASE_APP_CHECK,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_ENABLE_GOOGLE_AUTH: process.env.NEXT_PUBLIC_ENABLE_GOOGLE_AUTH,
     NEXT_PUBLIC_USE_FIREBASE_EMULATORS:
@@ -49,6 +54,7 @@ export function getFirebaseBrowserIntegrationEnv(
   if (
     runtime === "production" &&
     env.NEXT_PUBLIC_USE_FIREBASE_EMULATORS !== "true" &&
+    env.NEXT_PUBLIC_ENABLE_FIREBASE_APP_CHECK === "true" &&
     !env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY
   ) {
     throw new Error(

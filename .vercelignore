@@ -1,0 +1,14 @@
+.git
+.vercel
+**/node_modules
+**/.next
+**/.env*
+functions/.secret.local
+**/*.log
+**/*.tsbuildinfo
+test-results
+coverage
+.firebase
+firebase/.emulator-data
+Untitled-*
+scripts/assets

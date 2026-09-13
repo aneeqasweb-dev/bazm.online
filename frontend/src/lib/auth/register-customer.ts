@@ -1,12 +1,16 @@
 "use client";
 
 import { FirebaseError } from "firebase/app";
-import { createUserWithEmailAndPassword, deleteUser } from "firebase/auth";
-import { httpsCallable } from "firebase/functions";
+import {
+  createUserWithEmailAndPassword,
+  deleteUser,
+  sendEmailVerification,
+} from "firebase/auth";
 
 import { getFirebaseClientServices } from "@/lib/firebase/client";
 
 import type { RegistrationInput } from "./registration-schema";
+import { completeRegistration } from "./authorization-client";
 import { createServerSession } from "./session-client";
 
 export type RegistrationResult = { verificationSent: boolean };
@@ -14,24 +18,31 @@ export type RegistrationResult = { verificationSent: boolean };
 export async function registerCustomer(
   input: RegistrationInput,
 ): Promise<RegistrationResult> {
-  const { auth, functions } = getFirebaseClientServices();
+  const { auth } = getFirebaseClientServices();
   const credential = await createUserWithEmailAndPassword(
     auth,
     input.email,
     input.password,
   );
 
-  let verificationSent = false;
+  let emailVerified = false;
   try {
-    const completeRegistration = httpsCallable<
-      { name: string },
-      { ok: true; verificationSent: boolean }
-    >(functions, "completeRegistration");
-    const registration = await completeRegistration({ name: input.name });
-    verificationSent = registration.data.verificationSent;
+    const registration = await completeRegistration(
+      credential.user,
+      input.name,
+    );
+    emailVerified = registration.emailVerified;
   } catch (error) {
     await deleteUser(credential.user).catch(() => undefined);
     throw error;
+  }
+
+  let verificationSent = false;
+  if (!emailVerified) {
+    verificationSent = await sendEmailVerification(credential.user).then(
+      () => true,
+      () => false,
+    );
   }
 
   await createServerSession(await credential.user.getIdToken(true));

@@ -1,10 +1,9 @@
 "use client";
 
-import { httpsCallable } from "firebase/functions";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { getFirebaseClientServices } from "@/lib/firebase/client";
+import { callCommand } from "@/lib/commands/client";
 
 export function CartButton({
   productId,
@@ -24,11 +23,7 @@ export function CartButton({
     setPending(true);
     setMessage(undefined);
     try {
-      const { functions } = getFirebaseClientServices();
-      await httpsCallable(
-        functions,
-        "addCartItem",
-      )({
+      await callCommand("addCartItem", {
         productId,
         variantId,
         quantity,

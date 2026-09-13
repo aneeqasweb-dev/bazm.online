@@ -1,18 +1,14 @@
 "use client";
 
-import { FirebaseError } from "firebase/app";
-import { httpsCallable } from "firebase/functions";
 import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
-import { getFirebaseClientServices } from "@/lib/firebase/client";
+import { callCommand } from "@/lib/commands/client";
 
 function errorMessage(error: unknown) {
-  return error instanceof FirebaseError
-    ? error.message.replace(/^.*?:\s*/, "")
-    : error instanceof Error
-      ? error.message
-      : "The admin action could not be completed.";
+  return error instanceof Error
+    ? error.message
+    : "The admin action could not be completed.";
 }
 
 export function CallableActionButton({
@@ -65,8 +61,10 @@ export function useCallableAction(functionName: string) {
     setPending(true);
     setMessage(undefined);
     try {
-      const { functions } = getFirebaseClientServices();
-      await httpsCallable(functions, functionName)(payload);
+      await callCommand(
+        functionName,
+        (payload ?? {}) as Record<string, unknown>,
+      );
       setMessage(successMessage);
       router.refresh();
       return true;

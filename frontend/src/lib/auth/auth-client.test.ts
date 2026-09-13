@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
-  callable: vi.fn(),
-  callableNames: [] as string[],
+  synchronizeAuthorization: vi.fn(),
+  completeRegistration: vi.fn(),
   createServerSession: vi.fn(),
   deleteServerSession: vi.fn(),
   getIdToken: vi.fn(),
@@ -11,6 +11,8 @@ const mocks = vi.hoisted(() => ({
     authStateReady: vi.fn(),
   },
   setPersistence: vi.fn(),
+  sendEmailVerification: vi.fn(),
+  sendPasswordResetEmail: vi.fn(),
   signInWithEmailAndPassword: vi.fn(),
   signOut: vi.fn(),
 }));
@@ -21,6 +23,8 @@ vi.mock("firebase/auth", () => ({
   confirmPasswordReset: vi.fn(),
   GoogleAuthProvider: class GoogleAuthProvider {},
   reload: vi.fn(),
+  sendEmailVerification: mocks.sendEmailVerification,
+  sendPasswordResetEmail: mocks.sendPasswordResetEmail,
   setPersistence: mocks.setPersistence,
   signInWithEmailAndPassword: mocks.signInWithEmailAndPassword,
   signInWithPopup: vi.fn(),
@@ -28,18 +32,15 @@ vi.mock("firebase/auth", () => ({
   verifyPasswordResetCode: vi.fn(),
 }));
 
-vi.mock("firebase/functions", () => ({
-  httpsCallable: (_functions: unknown, name: string) => {
-    mocks.callableNames.push(name);
-    return mocks.callable;
-  },
-}));
-
 vi.mock("@/lib/firebase/client", () => ({
   getFirebaseClientServices: () => ({
     auth: mocks.auth,
-    functions: {},
   }),
+}));
+
+vi.mock("./authorization-client", () => ({
+  completeRegistration: mocks.completeRegistration,
+  synchronizeAuthorization: mocks.synchronizeAuthorization,
 }));
 
 vi.mock("@/lib/env/client", () => ({
@@ -65,12 +66,13 @@ import {
 describe("authentication client", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.callableNames = [];
     mocks.auth.currentUser = null;
     mocks.auth.authStateReady.mockResolvedValue(undefined);
     mocks.getIdToken.mockResolvedValue("fresh-id-token");
-    mocks.callable.mockResolvedValue({
-      data: { ok: true, role: "CUSTOMER", emailVerified: true },
+    mocks.synchronizeAuthorization.mockResolvedValue({
+      ok: true,
+      role: "CUSTOMER",
+      emailVerified: true,
     });
     mocks.signInWithEmailAndPassword.mockResolvedValue({
       user: { getIdToken: mocks.getIdToken },
@@ -85,7 +87,9 @@ describe("authentication client", () => {
       expect.anything(),
       "local",
     );
-    expect(mocks.callable).toHaveBeenCalledWith({});
+    expect(mocks.synchronizeAuthorization).toHaveBeenCalledWith(
+      expect.anything(),
+    );
     expect(mocks.getIdToken).toHaveBeenCalledWith(true);
     expect(mocks.createServerSession).toHaveBeenCalledWith("fresh-id-token");
   });
@@ -112,22 +116,23 @@ describe("authentication client", () => {
     await expect(loginWithGoogle()).rejects.toThrow("GOOGLE_AUTH_DISABLED");
   });
 
-  it("requests verification email through the trusted callable", async () => {
+  it("requests verification email through Firebase Auth", async () => {
     mocks.auth.currentUser = { uid: "customer-1" };
 
     await sendVerificationEmail();
 
     expect(mocks.auth.authStateReady).toHaveBeenCalledOnce();
-    expect(mocks.callableNames).toContain("sendVerificationEmail");
-    expect(mocks.callable).toHaveBeenCalledWith({});
+    expect(mocks.sendEmailVerification).toHaveBeenCalledWith(
+      mocks.auth.currentUser,
+    );
   });
 
-  it("requests password reset through the trusted callable", async () => {
+  it("requests password reset through Firebase Auth", async () => {
     await requestPasswordReset("customer@example.com");
 
-    expect(mocks.callableNames).toContain("requestPasswordResetEmail");
-    expect(mocks.callable).toHaveBeenCalledWith({
-      email: "customer@example.com",
-    });
+    expect(mocks.sendPasswordResetEmail).toHaveBeenCalledWith(
+      mocks.auth,
+      "customer@example.com",
+    );
   });
 });

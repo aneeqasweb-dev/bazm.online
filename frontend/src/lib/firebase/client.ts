@@ -7,16 +7,6 @@ import {
   getFirestore,
   type Firestore,
 } from "firebase/firestore";
-import {
-  connectFunctionsEmulator,
-  getFunctions,
-  type Functions,
-} from "firebase/functions";
-import {
-  connectStorageEmulator,
-  getStorage,
-  type FirebaseStorage,
-} from "firebase/storage";
 
 import { getFirebaseClientEnv } from "@/lib/env/client";
 
@@ -24,8 +14,6 @@ export type FirebaseClientServices = {
   app: FirebaseApp;
   auth: Auth;
   db: Firestore;
-  functions: Functions;
-  storage: FirebaseStorage;
 };
 
 let services: FirebaseClientServices | undefined;
@@ -49,18 +37,14 @@ export function getFirebaseClientServices(): FirebaseClientServices {
       });
   const auth = getAuth(app);
   const db = getFirestore(app);
-  const functions = getFunctions(app, "asia-south1");
-  const storage = getStorage(app);
 
   if (env.NEXT_PUBLIC_USE_FIREBASE_EMULATORS === "true") {
     connectAuthEmulator(auth, "http://127.0.0.1:9099", {
       disableWarnings: true,
     });
     connectFirestoreEmulator(db, "127.0.0.1", 8081);
-    connectFunctionsEmulator(functions, "127.0.0.1", 5001);
-    connectStorageEmulator(storage, "127.0.0.1", 9199);
   }
 
-  services = { app, auth, db, functions, storage };
+  services = { app, auth, db };
   return services;
 }
