@@ -4,8 +4,9 @@ Date started: 2026-09-01
 
 ## Status
 
-**IN PROGRESS** — preserve the completed Firebase phases while replacing the
-production Cloud Storage dependency with Cloudinary's free image service.
+**DEPLOYED — OWNER SETUP PENDING** — the free-tier portfolio is live at
+<https://bazm-online-frontend.vercel.app>. The owner must register and verify
+their account before administrator access can be assigned.
 
 ## Why this phase exists
 
@@ -45,13 +46,14 @@ Suite, and all earlier phase evidence remain valid and are not being removed.
 4. [x] Migrate product and category media uploads.
 5. [x] Migrate review image uploads.
 6. [x] Remove Firebase Storage and Functions from the production web client.
-7. Verify all customer/admin flows and deploy the free-tier configuration.
+7. [x] Verify customer/admin flows and deploy the free-tier configuration.
 8. [x] Seed the first bounded demo catalog and add repeat-safe staging seeds.
+9. [ ] Complete the owner's verified administrator setup.
 
 ## Completion record
 
 Phase: 22 — Free-tier media migration
-Status: IN PROGRESS
+Status: DEPLOYED — OWNER SETUP PENDING
 Completed tasks: Architecture and migration boundary recorded; existing Storage
 coupling audited; Firestore rules/indexes verified on staging; Cloudinary
 credentials verified with an upload/delete round trip; authenticated,
@@ -82,8 +84,7 @@ build passed. Replaced category, product, and review images now receive
 reference-aware, Bazm-path-restricted Cloudinary cleanup; shared images are
 preserved and cleanup failures cannot turn a completed database update into a
 misleading failed request.
-Remaining tasks: Complete hosted browser verification, publish the portfolio
-deployment, and finish the owner's verified administrator setup. Catalog
+Remaining tasks: Finish the owner's verified administrator setup. Catalog
 expansion is optional for the initial four-product portfolio release.
 
 ## Verification checkpoint — 2026-09-05
@@ -134,8 +135,8 @@ expansion is optional for the initial four-product portfolio release.
   client handlers were attached. Login, registration, and recovery now use POST;
   submission stays disabled until hydration. Two server-rendering regression
   tests pass, bringing the frontend suite to 35 tests.
-- Owner administrator: `aneeqa.dev@gmail.com`; registration and email
-  verification are required before the staging bootstrap can grant access.
+- Owner administrator setup awaits registration and email verification before
+  the staging bootstrap can grant access.
 
 To repeat the hosted test after authenticating Vercel CLI:
 
@@ -147,3 +148,28 @@ This portfolio uses staging Firebase data, COD, and sandbox card attempts.
 Live card processing, provider-confirmed refunds, and transactional email
 delivery still require real provider integrations; the historical commercial
 release gate is separate from the portfolio deployment.
+
+## Published portfolio release — 2026-09-13
+
+- Public URL: <https://bazm-online-frontend.vercel.app>.
+- Vercel deployment: `dpl_9cU8WRoTzLivuyQbivcR4nsMFaYi`, built from commit
+  `a43bffa` and promoted after build and verification checks.
+- All 26 Firestore composite indexes are ready.
+- Hosted API checks passed for registration, email verification, sessions,
+  authorization denial, avatar/catalog uploads, profile updates, catalog and
+  inventory administration, cart/wishlist, COD checkout, idempotency, order
+  ownership, fulfillment, reviews, moderation, support, returns, sandbox payment
+  attempts, and cancellation releasing inventory.
+- Desktop/mobile customer and administrator browser sign-in plus eight admin
+  pages passed separately after correcting the browser wait conditions and
+  auth-form hydration behavior. The final hosted release also passed auth-form
+  checks with JavaScript both disabled and enabled.
+- `npm run check` passed before the final auth-form change. Subsequent frontend
+  lint/type checks, all 35 frontend tests, and the final Vercel production build
+  passed. Together with 14 domain and 28 Functions tests, 77 unit tests passed.
+- Temporary QA accounts and products were removed; the catalog remains at four
+  products and three categories. Unreferenced test imagery was cleaned up.
+- After promotion, all 10 public release smoke paths passed, and the home,
+  shop, and registration pages passed desktop/mobile browser checks.
+- Owner registration/email verification and the super-admin bootstrap remain
+  pending. The emulator suite was not rerun for this release.

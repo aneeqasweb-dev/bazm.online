@@ -61,12 +61,17 @@ zero-cost operating constraint.
 
 ## Current staging evidence
 
+- Live portfolio: <https://bazm-online-frontend.vercel.app>.
+
 - Dedicated staging Firestore project in `asia-south1` with deployed indexes.
 - Three categories and four original-image products with variants and inventory.
 - Cloudinary upload/delete verification and idempotent staging seed scripts.
 - Forty production routes compile successfully.
 - Thirty-five frontend unit tests currently pass alongside lint and strict
   TypeScript checks.
+- Hosted API verification covers shopping, fulfillment, returns, media, and
+  authorization; separate browser checks cover customer/admin sign-in and
+  desktop/mobile private pages.
 
 ## Honest limitations
 

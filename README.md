@@ -4,6 +4,12 @@ Bazm is a Pakistan-first fashion e-commerce portfolio platform built with
 Next.js, TypeScript, Firebase, and Cloudinary. It demonstrates a complete
 storefront and operations workflow while remaining deployable on free tiers.
 
+[Live portfolio demo](https://bazm-online-frontend.vercel.app)
+
+The demo uses staging data, cash-on-delivery workflows, and sandbox card
+attempts. Real payment processing and transactional email delivery require
+provider integrations.
+
 ## Portfolio highlights
 
 - Responsive catalog, filters, product detail, wishlist, cart, and checkout.

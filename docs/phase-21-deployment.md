@@ -4,6 +4,11 @@ Date: 2026-08-30
 
 ## Status
 
+Historical commercial-release gate. The free-tier portfolio was deployed on
+2026-09-13; see [Phase 22](phase-22-free-tier-media.md) for the current URL,
+verification evidence, and pending owner setup. The record below describes the
+earlier commercial launch prerequisites.
+
 **BLOCKED** — deployment has not started because the Phase 20 production gate
 is open and no approved release candidate or deployment targets exist.
 
