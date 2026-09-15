@@ -64,7 +64,9 @@ zero-cost operating constraint.
 - Live portfolio: <https://bazm-online-frontend.vercel.app>.
 
 - Dedicated staging Firestore project in `asia-south1` with deployed indexes.
-- Three categories and four original-image products with variants and inventory.
+- Three categories and twelve original-image sample products with variants and inventory.
+- A cream-and-olive fashion storefront with photographic collections, eight new
+  arrivals, and two-column mobile product browsing; see the [refresh notes](storefront-refresh.md).
 - Cloudinary upload/delete verification and idempotent staging seed scripts.
 - Forty production routes compile successfully.
 - Thirty-five frontend unit tests currently pass alongside lint and strict

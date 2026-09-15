@@ -34,4 +34,15 @@ Each remaining prompt uses this template, substituting the name and subject belo
 
 `npm run test:storefront` checks the local staging-backed site. Set `STOREFRONT_TEST_BASE_URL` for the known hosted portfolio or its Vercel preview. It checks twelve products, eight new arrivals, category counts, images, responsive overflow, size selection, search and empty-state recovery, and automated accessibility on home, shop and product pages. Screenshots are saved under `test-results/storefront/`.
 
-Deployment and final verification results will be recorded after release.
+Released on 2026-09-15 at https://bazm-online-frontend.vercel.app.
+
+- Source commit: `efccdb1` (the follow-up `d2ec2e9` adjusts only the browser test timeout).
+- Verified preview: `dpl_Fsb3s2WtgW93UaCXEDJrTtFCL45Q`.
+- Production deployment: `dpl_6tjKJTpwBseqboCo3soECYVGhdLF`, ready and assigned to the public alias.
+- Frontend lint, strict TypeScript, 35 unit tests, and the Vercel production build passed.
+- All 14 storefront browser checks passed locally and on the hosted preview at 1440px and 390px. Images loaded, no horizontal overflow, search/clear/empty results and size selection worked, and home/shop/product pages passed the configured WCAG A/AA axe checks.
+- All 12 products, 24 variants/inventory records, and 3 categories passed the domain schemas. Re-running the seed correctly made no changes.
+- After the production alias became ready, all 10 public smoke paths passed.
+  Public home and shop pages returned HTTP 200 and showed the new design and
+  all 12 product cards at both 1440px and 390px.
+- The existing administrative, payment and email-provider setup is unchanged.

@@ -10,9 +10,13 @@ The demo uses staging data, cash-on-delivery workflows, and sandbox card
 attempts. Real payment processing and transactional email delivery require
 provider integrations.
 
+The latest [storefront refresh](docs/storefront-refresh.md) includes eight new
+AI-generated catalog photos and two-column mobile product grids.
+
 ## Portfolio highlights
 
-- Responsive catalog, filters, product detail, wishlist, cart, and checkout.
+- Cream-and-olive fashion storefront with 12 sample products, photographic
+  collections, responsive filters, product detail, wishlist, cart, and checkout.
 - Firebase email/password authentication with verified, server-managed sessions.
 - Role-based CUSTOMER, STAFF, ADMIN, and SUPER_ADMIN authorization.
 - Product, category, inventory, order, coupon, review, return, and support tools.
@@ -116,6 +120,9 @@ refuse unknown project IDs and never delete existing records:
 
 ```bash
 npm run seed:staging
+# Preview the expanded catalog, then publish when ready:
+npm run seed:staging:expanded
+npm run seed:staging:expanded -- --apply
 ```
 
 ## Planning documents

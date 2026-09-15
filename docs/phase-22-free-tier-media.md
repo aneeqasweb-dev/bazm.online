@@ -173,3 +173,13 @@ release gate is separate from the portfolio deployment.
   shop, and registration pages passed desktop/mobile browser checks.
 - Owner registration/email verification and the super-admin bootstrap remain
   pending. The emulator suite was not rerun for this release.
+
+## Storefront refresh — 2026-09-15
+
+The public demo now has twelve sample products across three collections and a
+cream-and-olive fashion storefront, with photographic hero/category sections,
+eight new arrivals, and two-column product grids on phones. The previous
+four-product release above remains as historical evidence.
+
+See [storefront refresh notes](storefront-refresh.md) for the current deployment,
+image prompts, idempotent seed, and desktop/mobile verification results.
