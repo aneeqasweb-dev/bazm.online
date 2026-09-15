@@ -96,7 +96,7 @@ export default async function ProductPage({
                 {index === breadcrumbItems.length - 1 ? (
                   <span className="text-stone-200">{item.name}</span>
                 ) : (
-                  <Link className="hover:text-white" href={item.path}>
+                  <Link className="hover:text-amber-300" href={item.path}>
                     {item.name}
                   </Link>
                 )}
@@ -105,7 +105,7 @@ export default async function ProductPage({
           </ol>
         </nav>
         <Link
-          className="mt-5 inline-flex text-sm text-stone-400 hover:text-white"
+          className="mt-5 inline-flex text-sm text-stone-400 hover:text-amber-300"
           href="/shop"
         >
           ← Back to shop
@@ -136,7 +136,7 @@ export default async function ProductPage({
             </Link>
           </div>
           {related.length ? (
-            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="store-product-grid mt-6">
               {related.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

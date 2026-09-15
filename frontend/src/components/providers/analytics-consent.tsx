@@ -69,10 +69,9 @@ export function AnalyticsConsent() {
     >
       <h2 className="text-lg font-semibold">Your privacy choices</h2>
       <p className="mt-2 text-sm leading-6 text-stone-300">
-        Essential Firebase services keep Bazm secure and functional. With your
-        permission, anonymous analytics help us understand site performance and
-        improve the shopping experience. Analytics stays off until you accept.
-        Read our{" "}
+        We use essential services to keep your shopping bag and account working.
+        With your permission, anonymous analytics help us improve your
+        experience. Analytics stays off until you accept. Read our{" "}
         <Link className="underline" href="/privacy">
           privacy notice
         </Link>

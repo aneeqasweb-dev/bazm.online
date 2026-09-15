@@ -98,7 +98,7 @@ export function ProductDetail({
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <section aria-label="Product images" className="grid gap-4">
-        <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-stone-800">
+        <div className="relative aspect-[3/4] overflow-hidden bg-stone-800">
           <Image
             alt={visibleImage.alt}
             className="object-cover"
@@ -136,7 +136,7 @@ export function ProductDetail({
         <p className="text-sm tracking-[0.2em] text-amber-300 uppercase">
           {product.brand}
         </p>
-        <h1 className="mt-3 text-4xl font-semibold">{product.name}</h1>
+        <h1 className="product-detail-title mt-3 text-4xl">{product.name}</h1>
         {product.ratingSummary.count ? (
           <p className="mt-3 text-sm text-stone-300">
             ★ {product.ratingSummary.average.toFixed(1)} from{" "}
@@ -205,7 +205,7 @@ export function ProductDetail({
         </fieldset>
         <p aria-live="polite" className="mt-4 text-sm text-emerald-200">
           {selected.isActive
-            ? `${selected.sku} is available to add when cart opens.`
+            ? "Available in your selected size"
             : "This combination is unavailable."}
         </p>
         <label
@@ -236,8 +236,8 @@ export function ProductDetail({
           <WishlistButton productId={product.id} />
         </div>
         <p className="mt-3 text-sm text-stone-400">
-          Cart quantities are saved to your account. Checkout will re-check
-          current stock and prices before payment.
+          Sign in to save your shopping bag and favourites. Final availability
+          is confirmed at checkout.
         </p>
       </section>
     </div>

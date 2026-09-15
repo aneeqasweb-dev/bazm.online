@@ -110,176 +110,206 @@ export default async function ShopPage({
   return (
     <StoreShell>
       <main className="mx-auto max-w-7xl px-5 py-12 sm:px-8">
-        <header>
-          <p className="text-sm tracking-[0.28em] text-amber-300 uppercase">
-            The collection
-          </p>
-          <h1 className="mt-3 text-4xl font-semibold">Shop Bazm</h1>
-          <p className="mt-3 max-w-2xl text-stone-400">
-            Search uses normalized product names, brands, and tags. Every result
-            page examines at most 96 published products before it gives you a
-            stable next page.
+        <header className="store-catalog-header">
+          <p className="store-eyebrow">THE COLLECTION</p>
+          <h1>Shop Bazm</h1>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-stone-400">
+            From everyday favourites to occasion pieces. Find something
+            beautiful for your next gathering.
           </p>
         </header>
-        <form
-          action="/shop"
-          className="mt-8 grid gap-3 rounded-2xl border border-stone-800 bg-stone-900 p-4 md:grid-cols-4"
-        >
-          <label className="text-sm text-stone-300" htmlFor="catalog-query">
-            Search
-            <input
-              className="field"
-              defaultValue={filters.query}
-              id="catalog-query"
-              name="q"
-              placeholder="Linen, shirt, bazm…"
-            />
-          </label>
-          <label className="text-sm text-stone-300" htmlFor="catalog-category">
-            Category
-            <select
-              className="field"
-              defaultValue={filters.categoryId ?? ""}
-              id="catalog-category"
-              name="category"
+        <form action="/shop" className="store-filter-panel">
+          <div className="store-filter-main">
+            <label className="text-xs text-stone-300" htmlFor="catalog-query">
+              Search the collection
+              <input
+                className="field"
+                defaultValue={filters.query}
+                id="catalog-query"
+                name="q"
+                placeholder="Try kurta, ivory, embroidered…"
+              />
+            </label>
+            <label
+              className="text-xs text-stone-300"
+              htmlFor="catalog-category"
             >
-              <option value="">All categories</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {"— ".repeat(category.depth)}
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="text-sm text-stone-300" htmlFor="catalog-brand">
-            Brand
-            <input
-              className="field"
-              defaultValue={filters.brand}
-              id="catalog-brand"
-              name="brand"
-              placeholder="Bazm"
-            />
-          </label>
-          <label className="text-sm text-stone-300" htmlFor="catalog-sort">
-            Sort
-            <select
-              className="field"
-              defaultValue={filters.sort}
-              id="catalog-sort"
-              name="sort"
-            >
-              <option value="PRICE_ASC">Price: low to high</option>
-              <option value="PRICE_DESC">Price: high to low</option>
-              <option value="NEWEST">Newest</option>
-            </select>
-          </label>
-          <label className="text-sm text-stone-300" htmlFor="catalog-color">
-            Color
-            <input
-              className="field"
-              defaultValue={filters.color}
-              id="catalog-color"
-              name="color"
-              placeholder="Black"
-            />
-          </label>
-          <label className="text-sm text-stone-300" htmlFor="catalog-size">
-            Size
-            <input
-              className="field"
-              defaultValue={filters.size}
-              id="catalog-size"
-              name="size"
-              placeholder="M"
-            />
-          </label>
-          <label className="text-sm text-stone-300" htmlFor="catalog-min-price">
-            Minimum price (PKR)
-            <input
-              className="field"
-              defaultValue={
-                filters.minPrice ? String(filters.minPrice / 100) : ""
-              }
-              id="catalog-min-price"
-              inputMode="numeric"
-              min="0"
-              name="minPrice"
-              type="number"
-            />
-          </label>
-          <label className="text-sm text-stone-300" htmlFor="catalog-max-price">
-            Maximum price (PKR)
-            <input
-              className="field"
-              defaultValue={
-                filters.maxPrice ? String(filters.maxPrice / 100) : ""
-              }
-              id="catalog-max-price"
-              inputMode="numeric"
-              min="0"
-              name="maxPrice"
-              type="number"
-            />
-          </label>
-          <label
-            className="text-sm text-stone-300"
-            htmlFor="catalog-availability"
-          >
-            Availability
-            <select
-              className="field"
-              defaultValue={filters.availability}
-              id="catalog-availability"
-              name="availability"
-            >
-              <option value="ALL">All products</option>
-              <option value="AVAILABLE">Available now</option>
-            </select>
-          </label>
-          <label className="text-sm text-stone-300" htmlFor="catalog-rating">
-            Rating
-            <select
-              className="field"
-              defaultValue={filters.rating ?? ""}
-              id="catalog-rating"
-              name="rating"
-            >
-              <option value="">Any rating</option>
-              <option value="4">4 stars and up</option>
-              <option value="3">3 stars and up</option>
-            </select>
-          </label>
-          <div className="flex items-end gap-3 md:col-span-2">
-            <button
-              className="rounded-full bg-amber-300 px-5 py-3 text-sm font-semibold text-stone-950"
-              type="submit"
-            >
-              Apply filters
-            </button>
-            <Link
-              className="rounded-full border border-stone-700 px-5 py-3 text-sm font-semibold hover:border-amber-300"
-              href="/shop"
-            >
-              Clear
-            </Link>
+              Category
+              <select
+                className="field"
+                defaultValue={filters.categoryId ?? ""}
+                id="catalog-category"
+                name="category"
+              >
+                <option value="">All collections</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {"— ".repeat(category.depth)}
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="text-xs text-stone-300" htmlFor="catalog-sort">
+              Sort by
+              <select
+                className="field"
+                defaultValue={filters.sort}
+                id="catalog-sort"
+                name="sort"
+              >
+                <option value="PRICE_ASC">Price: low to high</option>
+                <option value="PRICE_DESC">Price: high to low</option>
+                <option value="NEWEST">Newest</option>
+              </select>
+            </label>
+            <div className="flex items-center gap-4">
+              <button
+                className="bg-amber-300 px-5 py-3 text-xs font-medium text-stone-950"
+                type="submit"
+              >
+                Apply filters
+              </button>
+              <Link
+                className="text-xs underline underline-offset-4"
+                href="/shop"
+              >
+                Clear
+              </Link>
+            </div>
           </div>
+          <details
+            className="store-filter-extra"
+            open={Boolean(
+              filters.brand ||
+              filters.color ||
+              filters.size ||
+              filters.minPrice !== null ||
+              filters.maxPrice !== null ||
+              filters.rating !== null ||
+              filters.availability !== "ALL",
+            )}
+          >
+            <summary>More filters · size, colour & price</summary>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              <label className="text-xs text-stone-300" htmlFor="catalog-brand">
+                Brand
+                <input
+                  className="field"
+                  defaultValue={filters.brand}
+                  id="catalog-brand"
+                  name="brand"
+                  placeholder="Bazm"
+                />
+              </label>
+              <label className="text-xs text-stone-300" htmlFor="catalog-color">
+                Color
+                <input
+                  className="field"
+                  defaultValue={filters.color}
+                  id="catalog-color"
+                  name="color"
+                  placeholder="Ivory"
+                />
+              </label>
+              <label className="text-xs text-stone-300" htmlFor="catalog-size">
+                Size
+                <input
+                  className="field"
+                  defaultValue={filters.size}
+                  id="catalog-size"
+                  name="size"
+                  placeholder="Medium"
+                />
+              </label>
+              <label
+                className="text-xs text-stone-300"
+                htmlFor="catalog-availability"
+              >
+                Availability
+                <select
+                  className="field"
+                  defaultValue={filters.availability}
+                  id="catalog-availability"
+                  name="availability"
+                >
+                  <option value="ALL">All products</option>
+                  <option value="AVAILABLE">Available now</option>
+                </select>
+              </label>
+              <label
+                className="text-xs text-stone-300"
+                htmlFor="catalog-min-price"
+              >
+                Minimum price (PKR)
+                <input
+                  className="field"
+                  defaultValue={
+                    filters.minPrice === null
+                      ? ""
+                      : String(filters.minPrice / 100)
+                  }
+                  id="catalog-min-price"
+                  name="minPrice"
+                  type="number"
+                  inputMode="numeric"
+                  min="0"
+                />
+              </label>
+              <label
+                className="text-xs text-stone-300"
+                htmlFor="catalog-max-price"
+              >
+                Maximum price (PKR)
+                <input
+                  className="field"
+                  defaultValue={
+                    filters.maxPrice === null
+                      ? ""
+                      : String(filters.maxPrice / 100)
+                  }
+                  id="catalog-max-price"
+                  name="maxPrice"
+                  type="number"
+                  inputMode="numeric"
+                  min="0"
+                />
+              </label>
+              <label
+                className="text-xs text-stone-300"
+                htmlFor="catalog-rating"
+              >
+                Rating
+                <select
+                  className="field"
+                  defaultValue={filters.rating ?? ""}
+                  id="catalog-rating"
+                  name="rating"
+                >
+                  <option value="">Any rating</option>
+                  <option value="4">4 stars and up</option>
+                  <option value="3">3 stars and up</option>
+                </select>
+              </label>
+            </div>
+          </details>
         </form>
-        <p className="mt-8 text-sm text-stone-400">
-          {result.products.length} results on this page · {result.scanned}{" "}
-          products scanned safely.
+        <p className="mt-8 mb-6 text-xs text-stone-400" role="status">
+          {result.products.length}{" "}
+          {result.products.length === 1 ? "piece" : "pieces"}
+          {filters.query ? ` matching “${filters.query}”` : " to discover"}
+          {result.nextCursor ? " on this page" : ""}
         </p>
         {result.products.length ? (
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="store-product-grid">
             {result.products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
         ) : (
           <p className="mt-8 rounded-2xl border border-dashed border-stone-700 p-8 text-stone-400">
-            No published products match this part of the collection. Adjust the
-            filters or continue to the next bounded page.
+            No pieces match these filters. Try another colour, size or search
+            term.
           </p>
         )}
         {result.nextCursor ? (
@@ -287,7 +317,7 @@ export default async function ShopPage({
             className="mt-8 inline-flex rounded-full border border-stone-700 px-5 py-3 text-sm font-semibold hover:border-amber-300"
             href={nextPageHref(filters, result.nextCursor)}
           >
-            Next products
+            Discover more
           </Link>
         ) : null}
       </main>

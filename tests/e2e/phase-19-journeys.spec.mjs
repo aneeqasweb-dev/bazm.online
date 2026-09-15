@@ -605,9 +605,7 @@ test("empty, slow, and offline customer states stay keyboard operable", async ({
   });
   await page.goto(`/shop?q=phase19-no-results-${Date.now()}`);
   await expect(page.getByRole("heading", { name: "Shop Bazm" })).toBeVisible();
-  await expect(
-    page.getByText("No published products match this part of the collection."),
-  ).toBeVisible();
+  await expect(page.getByText("No pieces match these filters.")).toBeVisible();
   await assertNoCriticalA11yViolations(page, "empty slow shop state");
   await expectKeyboardReachable(
     page,

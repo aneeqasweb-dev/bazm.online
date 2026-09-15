@@ -260,7 +260,7 @@ export async function listHomeProducts({ kind }: { kind: "FEATURED" | "NEW" }) {
     .filter(
       (product): product is NonNullable<typeof product> => product !== null,
     )
-    .slice(0, 4);
+    .slice(0, kind === "NEW" ? 8 : 4);
 }
 
 export async function listRelatedProducts({

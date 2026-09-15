@@ -75,12 +75,12 @@ export default async function CategoryPage({
         data={breadcrumbJsonLd(breadcrumbItems)}
         id="category-breadcrumb-json-ld"
       />
-      <main className="px-6 py-10">
-        <div className="mx-auto max-w-6xl">
+      <main className="px-5 py-10 sm:px-8">
+        <div className="mx-auto max-w-7xl">
           <nav aria-label="Breadcrumb" className="text-sm text-stone-400">
             <ol className="flex flex-wrap gap-2">
               <li>
-                <Link className="hover:text-white" href="/">
+                <Link className="hover:text-amber-300" href="/">
                   Bazm
                 </Link>
               </li>
@@ -91,7 +91,7 @@ export default async function CategoryPage({
                     <span className="text-stone-200">{crumb.name}</span>
                   ) : (
                     <Link
-                      className="hover:text-white"
+                      className="hover:text-amber-300"
                       href={`/${result.breadcrumbs
                         .slice(0, index + 1)
                         .map((item) => item.slug)
@@ -104,16 +104,14 @@ export default async function CategoryPage({
               ))}
             </ol>
           </nav>
-          <header className="mt-10 max-w-3xl">
+          <header className="store-catalog-header mt-8">
             <p className="text-sm tracking-[0.28em] text-amber-300 uppercase">
               Bazm collection
             </p>
-            <h1 className="mt-3 text-4xl font-semibold sm:text-5xl">
-              {result.category.name}
-            </h1>
+            <h1 className="mt-3 text-4xl">{result.category.name}</h1>
             <p className="mt-4 leading-7 text-stone-400">
-              Browse our current selection and continue through the category
-              hierarchy.
+              {result.category.seo.description ??
+                "Beautiful pieces, thoughtful details. Discover your next favourite from the collection."}
             </p>
           </header>
           {children.length ? (
@@ -121,7 +119,7 @@ export default async function CategoryPage({
               <h2 className="text-xl font-semibold" id="child-categories">
                 Explore {result.category.name}
               </h2>
-              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="store-product-grid mt-6">
                 {children.map((child) => (
                   <Link
                     className="rounded-2xl border border-stone-800 bg-stone-900 p-5 transition hover:border-amber-300"
@@ -147,7 +145,7 @@ export default async function CategoryPage({
               </p>
             </div>
             {products.items.length ? (
-              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="store-product-grid mt-6">
                 {products.items.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
