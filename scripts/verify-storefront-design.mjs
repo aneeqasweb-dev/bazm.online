@@ -113,6 +113,10 @@ try {
           );
       }
       if (path === "/product/rose-ayla-suit") {
+        // The cart control is client-only, so its presence confirms hydration.
+        await expect(
+          page.getByRole("button", { name: "Add 1 to cart", exact: true }),
+        ).toBeEnabled();
         await page.getByRole("button", { name: "Medium", exact: true }).click();
         await expect(
           page.getByRole("button", { name: "Medium", exact: true }),
