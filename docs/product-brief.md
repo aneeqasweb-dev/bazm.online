@@ -6,9 +6,12 @@ an architecture decision record without blocking engineering foundations.
 ## Product
 
 Bazm is a curated, Pakistan-first fashion store for women and men, including
-occasion wear, shoes, bags and a small accessories edit. The owner confirmed on
+occasion wear, bags and a small accessories edit. The owner confirmed on
 2026-09-16 that the cream-and-olive fashion design should be retained, with more
-fashion pieces and without kids or general-store departments.
+fashion pieces and without kids or general-store departments. The follow-up
+correction restricts the visible catalog to Women, Men, Bags and Accessories,
+removes the short frock-style sample dresses and shoes, and keeps the original
+Pakistani women’s ensembles.
 The name means a gathering: the experience should feel considered, social, and
 editorial rather than like a dense discount warehouse.
 
@@ -33,10 +36,10 @@ photos require supplier permission and accurate alt text.
 
 ## MVP catalog
 
-| Department | Initial categories                          | Representative item                 |
-| ---------- | ------------------------------------------- | ----------------------------------- |
-| Women      | Dresses, Tops, Jeans, Shoes, Accessories    | Linen midi dress: black/sand; XS–XL |
-| Men        | Shirts, T-Shirts, Jeans, Shoes, Accessories | Oxford shirt: white/blue; S–XXL     |
+| Department | Initial categories                   | Representative item                 |
+| ---------- | ------------------------------------ | ----------------------------------- |
+| Women      | Dresses, Tops, Jeans, Accessories    | Linen midi dress: black/sand; XS–XL |
+| Men        | Shirts, T-Shirts, Jeans, Accessories | Oxford shirt: white/blue; S–XXL     |
 
 Every sellable combination is a variant with a unique SKU, for example
 `W-DRS-LIN-BLK-M`. Color and size are presentation attributes; the SKU is the

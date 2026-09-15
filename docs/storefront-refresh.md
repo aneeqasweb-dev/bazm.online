@@ -71,3 +71,9 @@ Released the fashion edit and account update on 2026-09-16 at https://bazm-onlin
 - Catalog schemas passed for 30 published products, 6 active categories, 77 active variants and their 77 inventory records.
 - Public release smoke checks passed on all 10 paths. The public home, shop, login and register pages returned HTTP 200, displayed the released design and had no horizontal overflow at 1440px and 390px.
 - The store continues to use sample products and test checkout. Live payment, transactional-email-provider activation and owner-admin setup remain separate from this design release.
+
+## Adult collections correction
+
+The owner pointed to the short frock images in the new-arrivals grid and asked for only men's and women's clothing, bags and accessories. The six added dresses and five shoe products are now archived. Adult men's shirts and handbags remain, alongside the original twelve-piece collection. The catalog contains nineteen products: six women's ensembles, seven men's pieces, five bags and one jewellery item. The two original evening bags now belong to Bags. Home uses four original-style collection photographs and navigation lists only Women, Men, Bags and Accessories alongside the general shopping links.
+
+`node scripts/curate-staging-adult-collections.mjs --apply` makes the bounded catalog correction, validates documents before writes, preserves before-images in `systemSeeds/adult-collections-v1`, and leaves inventories, orders, customers and product URLs intact. Archived product and category routes return 404. The improved login/registration flow is unchanged. Frontend lint and TypeScript passed; browser verification expectations now cover the four requested collections and the excluded frock/shoe routes.

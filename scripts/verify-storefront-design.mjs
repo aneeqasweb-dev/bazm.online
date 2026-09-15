@@ -55,13 +55,11 @@ try {
     page.on("pageerror", (error) => errors.push(error.message));
     for (const [path, cards, heading] of [
       ["/", 16, "For every"],
-      ["/shop", 24, "Shop Bazm"],
-      ["/formal-wear", 6, "Formal Wear"],
-      ["/mens-wear", 7, "Men's Wear"],
-      ["/accessories", 3, "Accessories"],
-      ["/women", 6, "Women"],
-      ["/shoes", 5, "Shoes"],
-      ["/bags", 3, "Bags"],
+      ["/shop", 19, "Shop Bazm"],
+      ["/formal-wear", 6, "Women"],
+      ["/mens-wear", 7, "Men"],
+      ["/accessories", 1, "Accessories"],
+      ["/bags", 5, "Bags"],
       ["/product/rose-ayla-suit", 4, "Rose Ayla Suit"],
     ]) {
       const response = await page.goto(`${base}${path}`, {
@@ -94,6 +92,11 @@ try {
         )
         .toBe(true);
       if (path === "/") {
+        await expect(page.locator(".store-category")).toHaveCount(4);
+        const labels = await page
+          .locator(".store-category h3")
+          .allTextContents();
+        assert.deepEqual(labels, ["Women", "Men", "Bags", "Accessories"]);
         await expect(page.locator("#new-arrivals .product-card")).toHaveCount(
           12,
         );
@@ -158,27 +161,33 @@ try {
       page.getByText("No pieces match these filters.", { exact: false }),
     ).toBeVisible();
     await page.getByRole("link", { name: "Clear", exact: true }).click();
-    await expect(page.locator(".product-card")).toHaveCount(24);
-    const firstPage = await page
-      .locator(".product-card")
-      .evaluateAll((cards) =>
-        cards.map((card) => card.querySelector("a").getAttribute("href")),
-      );
-    await page
-      .getByRole("link", { name: "Discover more", exact: true })
-      .click();
-    await expect(page.locator(".product-card")).toHaveCount(6);
-    const lastPage = await page
-      .locator(".product-card")
-      .evaluateAll((cards) =>
-        cards.map((card) => card.querySelector("a").getAttribute("href")),
-      );
+    await expect(page.locator(".product-card")).toHaveCount(19);
+    await expect(
+      page.getByRole("link", { name: "Discover more", exact: true }),
+    ).toHaveCount(0);
+    const allProducts = await page
+      .locator(".product-card a")
+      .evaluateAll((links) => links.map((link) => link.getAttribute("href")));
     assert.equal(
-      new Set([...firstPage, ...lastPage]).size,
-      30,
-      "All 30 products are reachable without duplicates",
+      new Set(allProducts).size,
+      19,
+      "All 19 adult-fashion products are reachable",
     );
-    for (const path of ["/kids", "/bottles", "/product/kids-sunshine-set"]) {
+    assert.ok(
+      !allProducts.some((href) =>
+        /frock|tartan-dress|red-shoes|kids-|sneakers/.test(href),
+      ),
+    );
+    for (const path of [
+      "/kids",
+      "/bottles",
+      "/shoes",
+      "/women",
+      "/product/kids-sunshine-set",
+      "/product/tartan-dress",
+      "/product/short-frock",
+      "/product/red-shoes",
+    ]) {
       const response = await page.goto(`${base}${path}`, {
         waitUntil: "domcontentloaded",
         timeout: 60000,

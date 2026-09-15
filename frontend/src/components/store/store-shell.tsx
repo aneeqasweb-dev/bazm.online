@@ -46,10 +46,8 @@ function StoreIcon({ name }: { name: "search" | "heart" | "account" | "bag" }) {
 const collections = [
   ["Shop all", "/shop"],
   ["New arrivals", "/shop?sort=NEWEST"],
-  ["Occasion wear", "/formal-wear"],
-  ["Women", "/women"],
+  ["Women", "/formal-wear"],
   ["Men", "/mens-wear"],
-  ["Shoes", "/shoes"],
   ["Bags", "/bags"],
   ["Accessories", "/accessories"],
 ];

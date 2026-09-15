@@ -107,7 +107,7 @@ export default async function Home() {
                       src={category.image.url}
                       fill
                       quality={75}
-                      sizes="(min-width: 1280px) 400px, (min-width: 640px) 33vw, 80vw"
+                      sizes="(min-width: 1280px) 300px, (min-width: 1024px) 25vw, (min-width: 640px) 50vw, 80vw"
                       className="object-cover object-top"
                     />
                   ) : null}
