@@ -60,3 +60,14 @@ Login, registration, password recovery and email verification now use a shared c
 Local verification: 44 frontend unit tests, lint and TypeScript passed. Twenty storefront browser checks passed at desktop and mobile widths, including six category counts, photos, search, size selection and accessibility. Actual temporary-customer registration, email verification and browser sign-in passed, as did admin sign-in and eight admin pages; the test fixtures were removed. `npm run test:auth-design` covers the account pages, error states, password visibility, navigation, responsive layout and accessibility. `npm run test:storefront` also checks pagination across all thirty products and archived routes.
 
 The expanded catalog exposed an existing pagination problem: the generic search-parameter reader cut signed cursors to eighty characters, so the second page silently restarted at the beginning. Cursor parameters now allow 2,048 characters while ordinary filter limits stay unchanged. A browser check confirms twenty-four products on the first page, six distinct products on the second, and 404 responses for retired departments and products. Shared field errors also retain readable contrast on the existing dark account-profile screen.
+
+Released the fashion edit and account update on 2026-09-16 at https://bazm-online-frontend.vercel.app.
+
+- Source: `9563255` (including `84f4508`).
+- Verified preview: `dpl_13jixa8YU7J6BNnEeSovKkNQdmM1`.
+- Production: `dpl_2syg3AT52Afuckdgfe5pU542qJCX`, READY and confirmed behind the public alias.
+- All 20 hosted storefront checks passed, including the thirty-product pagination and archived-route checks. All 10 hosted account-page checks passed, including validation, password controls, navigation and WCAG A/AA checks.
+- Hosted registration, verification, protected sessions, actual customer/admin browser sign-in and eight admin pages passed; temporary identities and fixtures were removed.
+- Catalog schemas passed for 30 published products, 6 active categories, 77 active variants and their 77 inventory records.
+- Public release smoke checks passed on all 10 paths. The public home, shop, login and register pages returned HTTP 200, displayed the released design and had no horizontal overflow at 1440px and 390px.
+- The store continues to use sample products and test checkout. Live payment, transactional-email-provider activation and owner-admin setup remain separate from this design release.
