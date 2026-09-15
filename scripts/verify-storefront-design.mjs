@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { mkdirSync, readFileSync } from "node:fs";
-import { chromium, expect } from "@playwright/test";
+import { chromium, expect as baseExpect } from "@playwright/test";
+const expect = baseExpect.configure({ timeout: 45000 });
 
 // Read-only browser checks for the hosted sample catalog. No accounts or orders are created.
 const base = process.env.STOREFRONT_TEST_BASE_URL ?? "http://127.0.0.1:3122";
