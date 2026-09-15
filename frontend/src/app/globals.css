@@ -111,7 +111,7 @@ body {
 }
 .store-desktop-links {
   display: flex;
-  gap: 28px;
+  gap: 20px;
   font-size: 13px;
 }
 .store-desktop-links a {

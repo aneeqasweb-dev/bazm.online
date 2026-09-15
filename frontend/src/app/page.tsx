@@ -7,6 +7,7 @@ import { StoreShell } from "@/components/store/store-shell";
 import { listHomeCategories, listHomeProducts } from "@/lib/catalog/server";
 import { publicMetadata } from "@/lib/seo/config";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo/structured-data";
+import { getPublishedProductBySlug } from "@/lib/storefront/server";
 
 export const dynamic = "force-dynamic";
 export const metadata = publicMetadata({
@@ -17,15 +18,13 @@ export const metadata = publicMetadata({
 });
 
 export default async function Home() {
-  const [categories, featured, newArrivals] = await Promise.all([
+  const [categories, featured, newArrivals, hero] = await Promise.all([
     listHomeCategories(),
     listHomeProducts({ kind: "FEATURED" }),
     listHomeProducts({ kind: "NEW" }),
+    getPublishedProductBySlug("rose-ayla-suit"),
   ]);
-  const heroProduct =
-    newArrivals.find((p) => p.slug === "rose-ayla-suit") ??
-    newArrivals[0] ??
-    featured[0];
+  const heroProduct = hero?.product ?? newArrivals[0] ?? featured[0];
   return (
     <StoreShell>
       <JsonLd data={organizationJsonLd()} id="organization-json-ld" />
@@ -118,7 +117,7 @@ export default async function Home() {
                     <p>
                       {category.slug === "formal-wear"
                         ? "THE OCCASION EDIT"
-                        : category.slug === "mens-wear"
+                        : ["mens-wear", "women"].includes(category.slug)
                           ? "EVERYDAY, ELEVATED"
                           : "THE FINISHING TOUCH"}
                     </p>

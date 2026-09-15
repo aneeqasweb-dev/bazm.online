@@ -33,7 +33,9 @@
     "emulators": "npm run prepare:emulators && DEBUG= METADATA_SERVER_DETECTION=none CHOKIDAR_USEPOLLING=true CHOKIDAR_INTERVAL=500 npx --yes firebase-tools@latest emulators:start --project demo-bazm-online",
     "emulators:exec": "npm run prepare:emulators && DEBUG= METADATA_SERVER_DETECTION=none CHOKIDAR_USEPOLLING=true CHOKIDAR_INTERVAL=500 npx --yes firebase-tools@latest emulators:exec --project demo-bazm-online --only auth,firestore,functions,storage \"npm run test\"",
     "seed:staging:expanded": "node scripts/seed-staging-catalog-v3.mjs",
-    "test:storefront": "node scripts/verify-storefront-design.mjs"
+    "test:storefront": "node scripts/verify-storefront-design.mjs",
+    "test:auth-design": "node scripts/verify-auth-design.mjs",
+    "curate:staging:fashion": "node scripts/curate-staging-fashion.mjs"
   },
   "engines": {
     "node": ">=22 <25"

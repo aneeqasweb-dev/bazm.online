@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
-
+import {
+  AuthField,
+  AuthMessage,
+  AuthShell,
+} from "@/components/auth/auth-shell";
 import {
   getRegistrationErrorMessage,
   registerCustomer,
@@ -22,12 +26,13 @@ export default function RegisterPage() {
     "idle",
   );
   const [verificationSent, setVerificationSent] = useState(false);
+  const [email, setEmail] = useState("");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!ready || status !== "idle") return;
     setFormError(undefined);
     setFieldErrors({});
-
     const form = new FormData(event.currentTarget);
     const parsed = registrationSchema.safeParse({
       name: form.get("name"),
@@ -35,7 +40,6 @@ export default function RegisterPage() {
       password: form.get("password"),
       confirmPassword: form.get("confirmPassword"),
     });
-
     if (!parsed.success) {
       const errors: FieldErrors = {};
       for (const issue of parsed.error.issues) {
@@ -43,12 +47,16 @@ export default function RegisterPage() {
         errors[field] ??= issue.message;
       }
       setFieldErrors(errors);
+      const firstField = event.currentTarget.elements.namedItem(
+        Object.keys(errors)[0],
+      );
+      if (firstField instanceof HTMLElement) firstField.focus();
       return;
     }
-
     setStatus("submitting");
     try {
       const result = await registerCustomer(parsed.data);
+      setEmail(parsed.data.email);
       setVerificationSent(result.verificationSent);
       setStatus("complete");
     } catch (error) {
@@ -59,144 +67,104 @@ export default function RegisterPage() {
 
   if (status === "complete") {
     return (
-      <main className="grid min-h-screen place-items-center bg-stone-950 px-6 text-stone-50">
-        <section className="w-full max-w-lg rounded-3xl border border-stone-800 bg-stone-900 p-8">
-          <p className="text-sm tracking-[0.28em] text-amber-300 uppercase">
-            Welcome to Bazm
-          </p>
-          <h1 className="mt-4 text-4xl font-semibold">
-            Your account is ready.
-          </h1>
-          <p className="mt-4 leading-7 text-stone-300" role="status">
-            {verificationSent
-              ? "We sent a verification link to your email address. Verify it before continuing."
-              : "Your account was created, but the verification email could not be sent. You can resend it from your account."}
+      <AuthShell
+        eyebrow="Welcome to Bazm"
+        title="You’re almost there"
+        description="Your account is created. Verify your email to finish setting it up."
+      >
+        <div className="mt-6 space-y-5">
+          <AuthMessage kind={verificationSent ? "success" : "info"}>
+            {verificationSent ? (
+              <>
+                We sent a verification link to{" "}
+                <strong className="break-all">{email}</strong>. Open the email
+                and tap the link.
+              </>
+            ) : (
+              "Your account is saved, but we couldn’t send the verification email. Request a new link below."
+            )}
+          </AuthMessage>
+          <p className="text-sm leading-6 text-stone-400">
+            Can’t find it? Check your spam or junk folder. You can also resend
+            the email on the next page.
           </p>
           <Link
-            className="mt-8 inline-block font-medium text-amber-300 underline"
+            className="inline-flex h-12 w-full items-center justify-center bg-amber-300 font-semibold text-stone-950"
             href="/verify-email"
           >
             Continue to verification
           </Link>
-        </section>
-      </main>
+          <Link
+            className="block text-center text-sm text-amber-300 underline"
+            href="/shop"
+          >
+            Keep browsing
+          </Link>
+        </div>
+      </AuthShell>
     );
   }
 
   return (
-    <main className="grid min-h-screen place-items-center bg-stone-950 px-6 py-12 text-stone-50">
-      <section className="w-full max-w-lg">
-        <Link className="text-sm text-stone-400 hover:text-stone-100" href="/">
-          ← Back to Bazm
-        </Link>
-        <h1 className="mt-8 text-4xl font-semibold tracking-tight">
-          Create your account
-        </h1>
-        <p className="mt-3 text-stone-400">
-          Save favourites, checkout faster, and track every order.
-        </p>
-
-        <form
-          className="mt-8 space-y-5"
-          method="post"
-          noValidate
-          onSubmit={handleSubmit}
+    <AuthShell
+      activeTab="register"
+      eyebrow="Make yourself at home"
+      title="Create your account"
+      description="Save your favourites, check out faster and follow your orders."
+    >
+      <form
+        className="mt-6 space-y-4"
+        method="post"
+        noValidate
+        onSubmit={handleSubmit}
+      >
+        <AuthField
+          label="Full name"
+          name="name"
+          autoComplete="name"
+          placeholder="Your full name"
+          error={fieldErrors.name}
+        />
+        <AuthField
+          label="Email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          error={fieldErrors.email}
+        />
+        <AuthField
+          label="Password"
+          name="password"
+          type="password"
+          autoComplete="new-password"
+          error={fieldErrors.password}
+          hint="Use 8+ characters, with a capital letter, a lowercase letter and a number."
+        />
+        <AuthField
+          label="Confirm password"
+          name="confirmPassword"
+          type="password"
+          autoComplete="new-password"
+          error={fieldErrors.confirmPassword}
+          placeholder="Enter your password again"
+        />
+        {formError ? <AuthMessage>{formError}</AuthMessage> : null}
+        <button
+          className="h-12 w-full bg-amber-300 font-semibold text-stone-950 disabled:cursor-wait disabled:opacity-60"
+          disabled={!ready || status === "submitting"}
+          type="submit"
         >
-          <Field
-            label="Full name"
-            name="name"
-            autoComplete="name"
-            error={fieldErrors.name}
-          />
-          <Field
-            label="Email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            error={fieldErrors.email}
-          />
-          <Field
-            label="Password"
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            error={fieldErrors.password}
-            hint="At least 8 characters with uppercase, lowercase, and a number."
-          />
-          <Field
-            label="Confirm password"
-            name="confirmPassword"
-            type="password"
-            autoComplete="new-password"
-            error={fieldErrors.confirmPassword}
-          />
-
-          {formError ? (
-            <p
-              className="rounded-xl bg-red-950 p-3 text-sm text-red-200"
-              role="alert"
-            >
-              {formError}
-            </p>
-          ) : null}
-          <button
-            className="h-12 w-full rounded-full bg-amber-300 font-semibold text-stone-950 disabled:cursor-wait disabled:opacity-60"
-            disabled={!ready || status === "submitting"}
-            type="submit"
-          >
-            {status === "submitting" ? "Creating account…" : "Create account"}
-          </button>
-        </form>
-        <p className="mt-8 text-center text-sm text-stone-400">
-          Already registered?{" "}
-          <Link className="text-amber-300 underline" href="/login">
-            Sign in
-          </Link>
-        </p>
-      </section>
-    </main>
-  );
-}
-
-function Field({
-  label,
-  name,
-  type = "text",
-  autoComplete,
-  error,
-  hint,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  autoComplete: string;
-  error?: string;
-  hint?: string;
-}) {
-  const descriptionId = `${name}-description`;
-  return (
-    <div>
-      <label className="mb-2 block text-sm font-medium" htmlFor={name}>
-        {label}
-      </label>
-      <input
-        aria-describedby={error || hint ? descriptionId : undefined}
-        aria-invalid={Boolean(error)}
-        autoComplete={autoComplete}
-        className="h-12 w-full rounded-xl border border-stone-700 bg-stone-900 px-4 outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
-        id={name}
-        name={name}
-        type={type}
-      />
-      {error ? (
-        <p className="mt-2 text-sm text-red-300" id={descriptionId}>
-          {error}
-        </p>
-      ) : hint ? (
-        <p className="mt-2 text-sm text-stone-500" id={descriptionId}>
-          {hint}
-        </p>
-      ) : null}
-    </div>
+          {status === "submitting"
+            ? "Creating your account…"
+            : "Create account"}
+        </button>
+      </form>
+      <p className="mt-6 text-center text-sm text-stone-400">
+        Already have an account?{" "}
+        <Link className="text-amber-300 underline" href="/login">
+          Sign in
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

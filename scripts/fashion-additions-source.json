@@ -1,0 +1,172 @@
+[
+  {
+    "sourceId": 162,
+    "slug": "blue-frock",
+    "name": "Blue Polka-Dot Dress",
+    "description": "A blue and white polka-dot dress with a fitted bodice and a gently flared skirt. An easy outfit for warm days and casual occasions.",
+    "categoryId": "demo-women",
+    "price": 2490,
+    "color": "Blue",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/tops/blue-frock/1.webp"
+  },
+  {
+    "sourceId": 164,
+    "slug": "gray-dress",
+    "name": "Grey Button-Front Dress",
+    "description": "A grey sleeveless dress with a button-front detail and a softly flared skirt. Pair with your favourite flats or heels.",
+    "categoryId": "demo-women",
+    "price": 2290,
+    "color": "Grey",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/tops/gray-dress/1.webp"
+  },
+  {
+    "sourceId": 165,
+    "slug": "short-frock",
+    "name": "Sage Tiered Dress",
+    "description": "A sage-green strapless dress with a layered skirt and waist tie. A playful choice for parties and sunny afternoons.",
+    "categoryId": "demo-women",
+    "price": 2790,
+    "color": "As shown",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/tops/short-frock/1.webp"
+  },
+  {
+    "sourceId": 166,
+    "slug": "tartan-dress",
+    "name": "Black & White Tartan Dress",
+    "description": "A monochrome tartan dress with a fitted waist and flared skirt. A classic pattern for your everyday wardrobe.",
+    "categoryId": "demo-women",
+    "price": 3190,
+    "color": "Tartan",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/tops/tartan-dress/1.webp"
+  },
+  {
+    "sourceId": 177,
+    "slug": "black-women-s-gown",
+    "name": "Floral Maxi Dress",
+    "description": "A black floral maxi dress with short sleeves and a flowing silhouette. Style with sandals or heels for an effortless outfit.",
+    "categoryId": "demo-women",
+    "price": 5490,
+    "color": "Black",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/womens-dresses/black-women's-gown/1.webp"
+  },
+  {
+    "sourceId": 180,
+    "slug": "dress-pea",
+    "name": "Red Ditsy-Print Dress",
+    "description": "A light dress with a small red print and a flared skirt. A cheerful addition to your casual wardrobe.",
+    "categoryId": "demo-women",
+    "price": 3490,
+    "color": "As shown",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/womens-dresses/dress-pea/1.webp"
+  },
+  {
+    "sourceId": 83,
+    "slug": "blue-black-check-shirt",
+    "name": "Blue & Black Check Shirt",
+    "description": "The Blue & Black Check Shirt is a stylish and comfortable men's shirt featuring a classic check pattern. Made from high-quality fabric, it's suitable for both casual and semi-formal occasions.",
+    "categoryId": "demo-mens-wear",
+    "price": 2490,
+    "color": "Blue & Black",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/mens-shirts/blue-&-black-check-shirt/1.webp"
+  },
+  {
+    "sourceId": 85,
+    "slug": "man-plaid-shirt",
+    "name": "Everyday Plaid Shirt",
+    "description": "The Man Plaid Shirt is a timeless and versatile men's shirt with a classic plaid pattern. Its comfortable fit and casual style make it a wardrobe essential for various occasions.",
+    "categoryId": "demo-mens-wear",
+    "price": 2690,
+    "color": "Plaid",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/mens-shirts/man-plaid-shirt/1.webp"
+  },
+  {
+    "sourceId": 86,
+    "slug": "man-short-sleeve-shirt",
+    "name": "Blue Floral Short-Sleeve Shirt",
+    "description": "The Man Short Sleeve Shirt is a breezy and stylish option for warm days. With a comfortable fit and short sleeves, it's perfect for a laid-back yet polished look.",
+    "categoryId": "demo-mens-wear",
+    "price": 1990,
+    "color": "As shown",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/mens-shirts/man-short-sleeve-shirt/1.webp"
+  },
+  {
+    "sourceId": 87,
+    "slug": "men-check-shirt",
+    "name": "Teal Check Shirt",
+    "description": "The Men Check Shirt is a classic and versatile shirt featuring a stylish check pattern. Suitable for various occasions, it adds a smart and polished touch to your wardrobe.",
+    "categoryId": "demo-mens-wear",
+    "price": 2390,
+    "color": "Check",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/mens-shirts/men-check-shirt/1.webp"
+  },
+  {
+    "sourceId": 185,
+    "slug": "black-brown-slipper",
+    "name": "Black & Tan Court Heels",
+    "description": "Pointed-toe court heels in black and tan with a slip-on design. A versatile finishing touch for dresses and tailored outfits.",
+    "categoryId": "demo-shoes",
+    "price": 1490,
+    "color": "Black & Brown",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/womens-shoes/black-&-brown-slipper/1.webp"
+  },
+  {
+    "sourceId": 187,
+    "slug": "golden-shoes-woman",
+    "name": "Gold Evening Heels",
+    "description": "The Golden Shoes for Women are a glamorous choice for special occasions. Featuring a golden hue and stylish design, they add a touch of luxury to your outfit.",
+    "categoryId": "demo-shoes",
+    "price": 2990,
+    "color": "Gold",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/womens-shoes/golden-shoes-woman/1.webp"
+  },
+  {
+    "sourceId": 188,
+    "slug": "pampi-shoes",
+    "name": "Classic Black Court Heels",
+    "description": "Classic black pointed-toe court heels with a slip-on fit. An easy match for occasion and work outfits.",
+    "categoryId": "demo-shoes",
+    "price": 2490,
+    "color": "As shown",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/womens-shoes/pampi-shoes/1.webp"
+  },
+  {
+    "sourceId": 189,
+    "slug": "red-shoes",
+    "name": "Red Pointed-Toe Heels",
+    "description": "Bright red pointed-toe heels with a simple slip-on design. Add a pop of colour to your next outfit.",
+    "categoryId": "demo-shoes",
+    "price": 2890,
+    "color": "Red",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/womens-shoes/red-shoes/1.webp"
+  },
+  {
+    "sourceId": 172,
+    "slug": "blue-women-s-handbag",
+    "name": "Navy Structured Handbag",
+    "description": "A structured navy handbag with two carry handles. A simple everyday bag for your small essentials.",
+    "categoryId": "demo-bags",
+    "price": 2790,
+    "color": "Blue",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/womens-bags/blue-women's-handbag/1.webp"
+  },
+  {
+    "sourceId": 175,
+    "slug": "white-faux-leather-backpack",
+    "name": "White Faux Leather Backpack",
+    "description": "The White Faux Leather Backpack is a trendy and practical backpack for the modern woman. With a sleek white design and ample storage space, it's perfect for both casual and on-the-go styles.",
+    "categoryId": "demo-bags",
+    "price": 2990,
+    "color": "White",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/womens-bags/white-faux-leather-backpack/1.webp"
+  },
+  {
+    "sourceId": 176,
+    "slug": "women-handbag-black",
+    "name": "Black Structured Handbag",
+    "description": "The Women Handbag in Black is a classic and versatile accessory that complements various outfits. With a timeless black color and functional design, it's a must-have in every woman's wardrobe.",
+    "categoryId": "demo-bags",
+    "price": 3490,
+    "color": "Black",
+    "sourceImage": "https://cdn.dummyjson.com/product-images/womens-bags/women-handbag-black/1.webp"
+  }
+]

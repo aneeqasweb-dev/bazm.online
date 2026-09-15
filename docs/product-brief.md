@@ -5,7 +5,10 @@ an architecture decision record without blocking engineering foundations.
 
 ## Product
 
-Bazm is a curated, Pakistan-first fashion marketplace for women, men, and kids.
+Bazm is a curated, Pakistan-first fashion store for women and men, including
+occasion wear, shoes, bags and a small accessories edit. The owner confirmed on
+2026-09-16 that the cream-and-olive fashion design should be retained, with more
+fashion pieces and without kids or general-store departments.
 The name means a gathering: the experience should feel considered, social, and
 editorial rather than like a dense discount warehouse.
 
@@ -17,7 +20,7 @@ editorial rather than like a dense discount warehouse.
   English UI.
 - Time: store timestamps in UTC; display business times in `Asia/Karachi`.
 - Tone: warm, concise, assured, inclusive, and never urgency-manipulative.
-- Visual direction: ink/stone neutrals, restrained amber accents, generous space,
+- Visual direction: cream neutrals, restrained olive accents, generous space,
   editorial typography, product imagery with consistent lighting.
 
 ## Originality and assets
@@ -30,11 +33,10 @@ photos require supplier permission and accurate alt text.
 
 ## MVP catalog
 
-| Department | Initial categories                          | Representative item                                |
-| ---------- | ------------------------------------------- | -------------------------------------------------- |
-| Women      | Dresses, Tops, Jeans, Shoes, Accessories    | Linen midi dress: black/sand; XS–XL                |
-| Men        | Shirts, T-Shirts, Jeans, Shoes, Accessories | Oxford shirt: white/blue; S–XXL                    |
-| Kids       | Girls, Boys                                 | Cotton co-ord: coral/navy; 3–4 through 11–12 years |
+| Department | Initial categories                          | Representative item                 |
+| ---------- | ------------------------------------------- | ----------------------------------- |
+| Women      | Dresses, Tops, Jeans, Shoes, Accessories    | Linen midi dress: black/sand; XS–XL |
+| Men        | Shirts, T-Shirts, Jeans, Shoes, Accessories | Oxford shirt: white/blue; S–XXL     |
 
 Every sellable combination is a variant with a unique SKU, for example
 `W-DRS-LIN-BLK-M`. Color and size are presentation attributes; the SKU is the

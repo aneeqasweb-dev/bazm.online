@@ -173,13 +173,14 @@ export async function listShopProducts({
   const candidates = await Promise.all(
     scan.map(async (document) => {
       const product = productDocumentSchema.parse(document.data());
-      const variants = await document.ref
-        .collection("variants")
-        .limit(50)
-        .get();
+      const [variants, registered] = await Promise.all([
+        document.ref.collection("variants").limit(50).get(),
+        productHasRegisteredRoute(document.id, product.slug, database),
+      ]);
       return {
         document,
         product,
+        registered,
         variants: variants.docs.map((variant) =>
           productVariantDocumentSchema.parse(variant.data()),
         ),
@@ -193,15 +194,7 @@ export async function listShopProducts({
     lastScanned = candidate.document;
     if (!matchesFilters(candidate.product, candidate.variants, filters))
       continue;
-    if (
-      !(await productHasRegisteredRoute(
-        candidate.document.id,
-        candidate.product.slug,
-        database,
-      ))
-    ) {
-      continue;
-    }
+    if (!candidate.registered) continue;
     const activeVariants = candidate.variants.filter(
       (variant) => variant.isActive,
     );
@@ -242,7 +235,7 @@ export async function listHomeProducts({ kind }: { kind: "FEATURED" | "NEW" }) {
       true,
     )
     .orderBy("createdAt", "desc")
-    .limit(20)
+    .limit(40)
     .get();
   const products = await Promise.all(
     snapshot.docs.map(async (document) => {
@@ -256,11 +249,25 @@ export async function listHomeProducts({ kind }: { kind: "FEATURED" | "NEW" }) {
         : null;
     }),
   );
-  return products
-    .filter(
-      (product): product is NonNullable<typeof product> => product !== null,
-    )
-    .slice(0, kind === "NEW" ? 8 : 4);
+  const visible = products.filter(
+    (product): product is NonNullable<typeof product> => product !== null,
+  );
+  if (kind === "FEATURED") return visible.slice(0, 4);
+  // Give each collection space in the new edit, even when a batch of products
+  // was published together. Preserve recency within each collection.
+  const groups = Map.groupBy(visible, (product) => product.categoryId);
+  const mixed: typeof visible = [];
+  while (
+    mixed.length < 12 &&
+    [...groups.values()].some((group) => group.length)
+  ) {
+    for (const group of groups.values()) {
+      const product = group.shift();
+      if (product) mixed.push(product);
+      if (mixed.length === 12) break;
+    }
+  }
+  return mixed;
 }
 
 export async function listRelatedProducts({
@@ -316,5 +323,5 @@ export async function listHomeCategories() {
     .filter(
       (category): category is NonNullable<typeof category> => category !== null,
     )
-    .slice(0, 3);
+    .slice(0, 6);
 }

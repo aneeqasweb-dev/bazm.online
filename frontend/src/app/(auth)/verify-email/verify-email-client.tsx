@@ -65,10 +65,16 @@ export function VerifyEmailClient({ code }: { code?: string }) {
       description={
         state === "verified"
           ? "Your account is verified and ready to use."
-          : "Verify your email before opening protected account pages."
+          : "Open the email from Bazm and tap the verification link to finish setting up your account."
       }
     >
       <div className="mt-8 space-y-4">
+        {state === "ready" || state === "sent" ? (
+          <p className="text-sm leading-6 text-stone-400">
+            Can’t find the email? Check your spam or junk folder, or request
+            another link below.
+          </p>
+        ) : null}
         {state === "applying" ? (
           <AuthMessage kind="info">Verifying your link…</AuthMessage>
         ) : null}

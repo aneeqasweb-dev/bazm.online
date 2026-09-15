@@ -78,6 +78,12 @@ export default function ForgotPasswordPage() {
           >
             {pending ? "Sending…" : "Send reset link"}
           </button>
+          <Link
+            className="block text-center text-sm text-amber-300 underline"
+            href="/login"
+          >
+            ← Back to sign in
+          </Link>
         </form>
       )}
     </AuthShell>

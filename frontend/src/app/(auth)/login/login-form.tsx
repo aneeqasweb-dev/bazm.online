@@ -53,6 +53,7 @@ export function LoginForm({
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!ready || pending !== null) return;
     setErrors({});
     setFormError(undefined);
     const form = new FormData(event.currentTarget);
@@ -67,6 +68,10 @@ export function LoginForm({
         nextErrors[field] ??= issue.message;
       }
       setErrors(nextErrors);
+      const firstField = event.currentTarget.elements.namedItem(
+        Object.keys(nextErrors)[0],
+      );
+      if (firstField instanceof HTMLElement) firstField.focus();
       return;
     }
 
@@ -82,11 +87,12 @@ export function LoginForm({
 
   return (
     <AuthShell
+      activeTab="login"
       eyebrow="Your account"
       title="Welcome back"
-      description="Sign in to manage your profile and continue shopping securely."
+      description="Your favourites, orders and next great outfit are waiting."
     >
-      <div className="mt-6 space-y-3">
+      <div className="space-y-3 empty:hidden [&:not(:empty)]:mt-6">
         {reason === "session-expired" ? (
           <AuthMessage kind="info">
             Your session ended. Sign in again to continue.

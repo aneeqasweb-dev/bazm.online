@@ -54,11 +54,14 @@ try {
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
     for (const [path, cards, heading] of [
-      ["/", 12, "For every"],
-      ["/shop", 12, "Shop Bazm"],
+      ["/", 16, "For every"],
+      ["/shop", 24, "Shop Bazm"],
       ["/formal-wear", 6, "Formal Wear"],
-      ["/mens-wear", 3, "Men's Wear"],
+      ["/mens-wear", 7, "Men's Wear"],
       ["/accessories", 3, "Accessories"],
+      ["/women", 6, "Women"],
+      ["/shoes", 5, "Shoes"],
+      ["/bags", 3, "Bags"],
       ["/product/rose-ayla-suit", 4, "Rose Ayla Suit"],
     ]) {
       const response = await page.goto(`${base}${path}`, {
@@ -92,7 +95,7 @@ try {
         .toBe(true);
       if (path === "/") {
         await expect(page.locator("#new-arrivals .product-card")).toHaveCount(
-          8,
+          12,
         );
         if (width === 390)
           assert.equal(
@@ -143,7 +146,7 @@ try {
       );
     }
     await page.goto(`${base}/shop`, { waitUntil: "domcontentloaded" });
-    await page.getByLabel("Search the collection").fill("sage");
+    await page.getByLabel("Search the collection").fill("inaya");
     await page.getByRole("button", { name: "Apply filters" }).click();
     await expect(page.locator(".product-card")).toHaveCount(1);
     await expect(page.locator(".product-card")).toContainText(
@@ -155,7 +158,33 @@ try {
       page.getByText("No pieces match these filters.", { exact: false }),
     ).toBeVisible();
     await page.getByRole("link", { name: "Clear", exact: true }).click();
-    await expect(page.locator(".product-card")).toHaveCount(12);
+    await expect(page.locator(".product-card")).toHaveCount(24);
+    const firstPage = await page
+      .locator(".product-card")
+      .evaluateAll((cards) =>
+        cards.map((card) => card.querySelector("a").getAttribute("href")),
+      );
+    await page
+      .getByRole("link", { name: "Discover more", exact: true })
+      .click();
+    await expect(page.locator(".product-card")).toHaveCount(6);
+    const lastPage = await page
+      .locator(".product-card")
+      .evaluateAll((cards) =>
+        cards.map((card) => card.querySelector("a").getAttribute("href")),
+      );
+    assert.equal(
+      new Set([...firstPage, ...lastPage]).size,
+      30,
+      "All 30 products are reachable without duplicates",
+    );
+    for (const path of ["/kids", "/bottles", "/product/kids-sunshine-set"]) {
+      const response = await page.goto(`${base}${path}`, {
+        waitUntil: "domcontentloaded",
+        timeout: 60000,
+      });
+      assert.equal(response.status(), 404, `Retired route: ${path}`);
+    }
     assert.deepEqual(errors, [], `Browser errors at ${width}px`);
     console.log(
       `PASS ${width}px search, empty results, clear filters and size selection`,
