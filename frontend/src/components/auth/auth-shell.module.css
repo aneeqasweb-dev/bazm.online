@@ -1,8 +1,12 @@
 .page {
+  --auth-field-error: #b91c1c;
   min-height: 100svh;
   background: #f7f5ef;
   color: #293122;
   padding: 24px 32px 30px;
+}
+.fieldError {
+  color: var(--auth-field-error, #fca5a5);
 }
 .header,
 .footer {

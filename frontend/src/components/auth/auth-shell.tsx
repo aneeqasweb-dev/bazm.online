@@ -162,7 +162,7 @@ export function AuthField({
         ) : null}
       </div>
       {error ? (
-        <p className="mt-2 text-sm text-red-700" id={descriptionId}>
+        <p className={`mt-2 text-sm ${styles.fieldError}`} id={descriptionId}>
           {error}
         </p>
       ) : hint ? (

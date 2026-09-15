@@ -11,9 +11,9 @@ export const dynamic = "force-dynamic";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
-function value(params: SearchParams, key: string) {
+function value(params: SearchParams, key: string, maxLength = 80) {
   const result = params[key];
-  return typeof result === "string" ? result.slice(0, 80) : "";
+  return typeof result === "string" ? result.slice(0, maxLength) : "";
 }
 
 function money(value: string) {
@@ -102,7 +102,7 @@ export default async function ShopPage({
 }) {
   const params = await searchParams;
   const filters = catalogFilters(params);
-  const cursor = value(params, "cursor") || null;
+  const cursor = value(params, "cursor", 2048) || null;
   const [result, categories] = await Promise.all([
     listShopProducts({ cursor, filters }),
     listProductCategories(),
