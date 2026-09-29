@@ -545,6 +545,25 @@ export const orderStatusSchema = z.enum([
   "REFUNDED",
 ]);
 
+export const demoPaymentMethodSchema = z.enum([
+  "EASYPAISA",
+  "JAZZCASH",
+  "CARD",
+]);
+export const paymentMethodSchema = z.enum([
+  "EASYPAISA",
+  "JAZZCASH",
+  "CARD",
+  "CASH_ON_DELIVERY",
+]);
+export const paymentProviderSchema = z.enum([
+  "DEMO",
+  "SANDBOX",
+  "COD",
+  "STRIPE",
+  "PAYFAST",
+]);
+
 export const orderItemSnapshotSchema = z
   .object({
     productId: documentIdSchema,
@@ -586,9 +605,8 @@ export const orderDocumentSchema = z
     paymentId: documentIdSchema.nullable(),
     reservationId: documentIdSchema.nullable().default(null),
     checkoutIdempotencyKey: z.string().trim().min(8).max(80).default("legacy"),
-    paymentMethod: z
-      .enum(["CARD", "CASH_ON_DELIVERY"])
-      .default("CASH_ON_DELIVERY"),
+    paymentMethod: paymentMethodSchema.default("CASH_ON_DELIVERY"),
+    isDemo: z.boolean().default(false),
     trackingNumber: z.string().trim().min(3).max(100).nullable().default(null),
     deliveryMethod: z.enum(["STANDARD", "EXPRESS"]),
     policyVersion: z.string().trim().min(1).max(50),
@@ -608,9 +626,7 @@ export const checkoutIntentSchema = z
       .min(8)
       .max(80)
       .regex(/^[A-Za-z0-9_-]+$/, "Use a safe checkout key."),
-    paymentMethod: z
-      .enum(["CARD", "CASH_ON_DELIVERY"])
-      .default("CASH_ON_DELIVERY"),
+    paymentMethod: paymentMethodSchema.default("CASH_ON_DELIVERY"),
     shippingAddressId: documentIdSchema,
     billingAddressId: documentIdSchema.nullable(),
     couponCode: z
@@ -664,7 +680,9 @@ export const paymentDocumentSchema = z
   .object({
     orderId: documentIdSchema,
     userId: userIdSchema,
-    provider: z.enum(["SANDBOX", "COD", "STRIPE", "PAYFAST"]),
+    provider: paymentProviderSchema,
+    method: paymentMethodSchema.optional(),
+    transactionId: z.string().min(1).max(255).nullable().default(null),
     providerPaymentId: z.string().trim().min(1).max(255).nullable(),
     amount: positiveMoneySchema,
     refundedAmount: moneySchema,
@@ -680,7 +698,7 @@ export const paymentDocumentSchema = z
 export const paymentIntentInputSchema = z
   .object({
     orderId: documentIdSchema,
-    method: z.enum(["CARD", "CASH_ON_DELIVERY"]),
+    method: paymentMethodSchema,
   })
   .strict();
 
@@ -689,7 +707,7 @@ export const paymentAttemptDocumentSchema = z
     paymentId: documentIdSchema,
     orderId: documentIdSchema,
     userId: userIdSchema,
-    provider: z.enum(["SANDBOX", "COD", "STRIPE", "PAYFAST"]),
+    provider: paymentProviderSchema,
     status: paymentStatusSchema,
     providerReference: z.string().trim().min(8).max(255),
     schemaVersion: schemaVersionSchema,
@@ -745,7 +763,7 @@ export const customerPaymentReadSchema = z
   .object({
     id: documentIdSchema,
     orderId: documentIdSchema,
-    provider: z.enum(["SANDBOX", "COD", "STRIPE", "PAYFAST"]),
+    provider: paymentProviderSchema,
     amount: positiveMoneySchema,
     refundedAmount: moneySchema,
     status: paymentStatusSchema,

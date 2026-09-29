@@ -54,7 +54,8 @@ body {
   --color-emerald-200: #216743;
   --color-rose-200: #a12841;
   --color-rose-300: #9c2840;
-  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
 }
 .storefront .field {
   border-color: #c9c5b9;
@@ -71,24 +72,28 @@ body {
   outline-offset: 5px;
 }
 .store-announcement {
-  background: #404d34;
+  background: #1d1a16;
   color: #fffdf7;
   text-align: center;
   padding: 10px 16px;
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
 }
-.store-announcement span {
-  margin-left: 20px;
+.store-announcement a {
+  margin-left: 12px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 600;
 }
 .store-header {
   border-bottom: 1px solid #e4e1d7;
-  background: #fbfaf7;
+  background: #fff;
 }
 .store-nav {
-  max-width: 1400px;
+  max-width: 1360px;
   margin: auto;
-  padding: 22px 40px;
+  padding: 20px 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -112,10 +117,11 @@ body {
 .store-desktop-links {
   display: flex;
   gap: 20px;
-  font-size: 13px;
+  font-size: 15px;
+  font-weight: 600;
 }
 .store-desktop-links a {
-  padding: 10px 0;
+  padding: 12px 0;
   border-bottom: 1px solid transparent;
 }
 .store-desktop-links a:hover {
@@ -128,8 +134,8 @@ body {
 .store-actions a {
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   transition: background 0.2s;
 }
@@ -142,11 +148,11 @@ body {
 .store-hero {
   display: grid;
   grid-template-columns: 47% 53%;
-  min-height: 660px;
+  min-height: 540px;
   background: #eeebe2;
 }
 .store-hero-copy {
-  padding: 100px max(32px, calc((100vw - 1280px) / 2));
+  padding: 64px max(32px, calc((100vw - 1280px) / 2));
   padding-right: 28px;
   display: flex;
   flex-direction: column;
@@ -154,42 +160,44 @@ body {
   justify-content: center;
 }
 .store-eyebrow {
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.19em;
   font-weight: 600;
-  color: #626a54;
+  color: #48543d;
   line-height: 1.7;
 }
 .store-hero h1 {
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(48px, 5.1vw, 80px);
+  font-size: clamp(44px, 4.6vw, 68px);
   font-weight: 400;
   letter-spacing: -0.045em;
   line-height: 1.07;
-  margin-top: 28px;
+  margin-top: 20px;
 }
 .store-hero h1 em {
   font-weight: 400;
   color: #65704f;
 }
 .store-hero-description {
-  font-size: 14px;
-  color: #676b60;
-  line-height: 1.9;
-  margin-top: 25px;
+  font-size: 16px;
+  color: #434b3a;
+  line-height: 1.8;
+  margin-top: 22px;
   max-width: 390px;
 }
 .store-button {
-  background: #424f36;
+  background: #1d1a16;
   color: #fffdf7;
   display: inline-flex;
   justify-content: space-between;
   align-items: center;
   gap: 36px;
-  padding: 17px 25px;
-  font-size: 12px;
+  padding: 15px 26px;
+  min-height: 48px;
+  font-size: 16px;
+  font-weight: 600;
   letter-spacing: 0.03em;
-  margin-top: 32px;
+  margin-top: 26px;
   transition: background 0.2s;
 }
 .store-button:hover {
@@ -199,15 +207,18 @@ body {
   font-size: 20px;
 }
 .store-hero-secondary {
-  margin-top: 29px;
-  font-size: 11px;
-  color: #626957;
+  margin-top: 18px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #414936;
+  text-decoration: underline;
+  text-underline-offset: 4px;
   display: flex;
   gap: 30px;
 }
 .store-hero-image {
   position: relative;
-  min-height: 660px;
+  min-height: 540px;
   overflow: hidden;
 }
 .store-hero-image img {
@@ -224,13 +235,13 @@ body {
   align-items: center;
   background: #fbfaf7ed;
   color: #333c29;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.05em;
   line-height: 1.8;
 }
 .store-hero-caption strong {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   letter-spacing: 0;
 }
 .store-hero-caption > span:last-child {
@@ -240,11 +251,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 65px;
-  padding: 22px 20px;
+  gap: 45px;
+  padding: 18px 20px;
   border-bottom: 1px solid #e4e1d7;
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 .store-service-strip > span {
   color: #7a8169;
@@ -253,10 +265,10 @@ body {
 .store-section {
   max-width: 1360px;
   margin: 0 auto;
-  padding: 76px 40px 0;
+  padding: 56px 40px 0;
 }
 .store-section:last-of-type {
-  padding-bottom: 76px;
+  padding-bottom: 56px;
 }
 .store-section-heading {
   display: flex;
@@ -266,11 +278,11 @@ body {
   margin-bottom: 30px;
 }
 .store-section-heading h2 {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(29px, 3vw, 42px);
-  font-weight: 400;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(25px, 2.5vw, 34px);
+  font-weight: 600;
   line-height: 1.15;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.025em;
   margin-top: 9px;
 }
 .store-text-link {
@@ -279,7 +291,8 @@ body {
   align-items: center;
   border-bottom: 1px solid #7b826e;
   padding-bottom: 6px;
-  font-size: 12px;
+  font-size: 15px;
+  font-weight: 600;
   white-space: nowrap;
 }
 .store-text-link:hover {
@@ -288,11 +301,11 @@ body {
 .store-category-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 24px;
+  gap: 18px;
 }
 .store-category-image {
   position: relative;
-  aspect-ratio: 4/4.7;
+  aspect-ratio: 5/4;
   overflow: hidden;
   background: #e5e1d6;
 }
@@ -306,93 +319,92 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 19px 0 4px;
-}
-.store-category-caption p {
-  font-size: 9px;
-  letter-spacing: 0.17em;
-  color: #666c5b;
+  padding: 14px 0 4px;
 }
 .store-category-caption h3 {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 28px;
-  margin-top: 3px;
+  font-size: 18px;
+  font-weight: 600;
 }
 .store-category-caption > span {
   border: 1px solid #d1d2c6;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
-  font-size: 22px;
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
 }
 .store-product-grid {
   display: grid;
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 32px 22px;
+  gap: 30px 18px;
+}
+.product-card {
+  min-width: 0;
+}
+.product-card-image {
+  aspect-ratio: 4 / 5;
 }
 .product-card a {
   border-radius: 2px;
 }
+.product-card a:hover h3,
+.product-card a:focus-visible h3 {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
 .product-card-badge {
   position: absolute;
   left: 12px;
-  top: 12px;
-  background: #fbfaf7ed;
-  color: #414b35;
-  font-size: 9px;
-  padding: 6px 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.product-card-view {
-  position: absolute;
   bottom: 12px;
-  left: 12px;
-  right: 12px;
-  padding: 12px 15px;
-  background: #fbfaf7f2;
-  color: #35412c;
-  display: flex;
-  justify-content: space-between;
+  background: #1d1a16;
+  color: #fffdf7;
+  border-radius: 99px;
   font-size: 11px;
-  transform: translateY(65px);
-  transition: transform 0.25s;
-}
-.product-card:hover .product-card-view,
-.product-card:focus-within .product-card-view {
-  transform: translateY(0);
+  font-weight: 600;
+  padding: 6px 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 .product-card-info {
-  padding: 15px 0 4px;
-}
-.product-card-label {
-  font-size: 9px;
-  color: #69705f;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
+  padding: 14px 0 0;
 }
 .product-card-info h3 {
-  margin-top: 5px;
-  font-weight: 500;
-  font-size: 14px;
+  min-height: 3em;
+  font-weight: 600;
+  font-size: 16px;
+  color: #22241e;
   line-height: 1.5;
 }
 .product-card-price {
-  margin-top: 7px;
-  font-size: 12px;
-  color: #505b43;
+  margin-top: 6px;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #22241e;
+  font-variant-numeric: tabular-nums;
+}
+.store-section-action {
+  text-align: center;
+  margin-top: 30px;
+}
+.store-section-action .store-button {
+  min-width: 160px;
+  justify-content: center;
+  margin-top: 0;
 }
 .store-story {
   background: #e9ecdf;
-  margin-top: 78px;
-  padding: 62px 24px;
+  margin-top: 56px;
+  padding: 44px 24px;
   text-align: center;
 }
 .store-story h2 {
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(40px, 4.7vw, 64px);
+  font-size: clamp(32px, 3.5vw, 46px);
   letter-spacing: -0.04em;
   line-height: 1.12;
   margin-top: 17px;
@@ -404,12 +416,12 @@ body {
 .store-story > p:not(.store-eyebrow) {
   max-width: 510px;
   margin: 22px auto;
-  color: #5e6852;
-  line-height: 1.9;
-  font-size: 13px;
+  color: #414936;
+  line-height: 1.8;
+  font-size: 16px;
 }
 .store-care-strip {
-  margin-top: 76px;
+  margin-top: 56px;
   border-top: 1px solid #e4e1d7;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -423,13 +435,13 @@ body {
   font-size: 27px;
 }
 .store-care-strip h2 {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   margin-top: 12px;
 }
 .store-care-strip a {
   display: inline-block;
-  font-size: 11px;
+  font-size: 14px;
   margin-top: 6px;
   color: #666e5b;
   text-decoration: underline;
@@ -446,7 +458,7 @@ body {
   gap: 40px;
 }
 .store-footer-grid p {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.9;
   max-width: 270px;
   margin-top: 24px;
@@ -456,10 +468,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  font-size: 11px;
+  font-size: 14px;
 }
 .store-footer-grid h2 {
-  font-size: 12px;
+  font-size: 15px;
   margin-bottom: 9px;
   font-weight: 600;
 }
@@ -474,7 +486,7 @@ body {
   border-top: 1px solid #d7d9cc;
   padding-top: 22px;
   margin-top: 45px;
-  font-size: 10px;
+  font-size: 12px;
   color: #626b57;
 }
 .store-catalog-header {
@@ -492,6 +504,15 @@ body {
   border-top: 1px solid #e1e1d7;
   border-bottom: 1px solid #e1e1d7;
   padding: 22px 0;
+}
+.store-filter-panel :is(label, summary, button, a) {
+  font-size: 14px;
+  font-weight: 600;
+}
+.store-filter-panel :is(input, select) {
+  min-height: 44px;
+  font-size: 16px;
+  font-weight: 400;
 }
 .store-filter-main {
   display: grid;
@@ -515,21 +536,36 @@ body {
     padding: 20px 24px;
   }
   .store-desktop-links {
-    gap: 17px;
-    font-size: 12px;
+    display: none;
+  }
+  .store-mobile-links {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    border-top: 1px solid #e4e1d7;
+    padding: 0 24px;
+    font-size: 14px;
+    font-weight: 600;
+    scrollbar-width: thin;
+  }
+  .store-mobile-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    flex-shrink: 0;
   }
   .store-actions {
     gap: 0;
   }
   .store-actions a {
-    width: 35px;
+    width: 44px;
   }
   .store-hero,
   .store-hero-image {
-    min-height: 550px;
+    min-height: 460px;
   }
   .store-hero-copy {
-    padding: 65px 28px;
+    padding: 46px 28px;
   }
   .store-service-strip {
     gap: 30px;
@@ -543,10 +579,7 @@ body {
 }
 @media (max-width: 767px) {
   .store-announcement {
-    font-size: 9px;
-  }
-  .store-announcement span {
-    display: none;
+    font-size: 12px;
   }
   .store-nav {
     padding: 20px;
@@ -560,27 +593,26 @@ body {
     margin-top: 10px;
   }
   .store-actions a {
-    width: 38px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
   }
   .store-desktop-links {
     display: none;
   }
   .store-mobile-links {
     display: flex;
-    gap: 23px;
+    gap: 24px;
     overflow-x: auto;
     border-top: 1px solid #e4e1d7;
-    padding: 13px 20px;
-    font-size: 11px;
-    scrollbar-width: none;
+    padding: 0 20px;
+    font-size: 14px;
   }
   .store-mobile-links a {
     white-space: nowrap;
   }
   .store-hero {
     grid-template-columns: 1fr 1fr;
-    min-height: 440px;
+    min-height: 420px;
   }
   .store-hero-copy {
     padding: 40px 22px;
@@ -589,10 +621,10 @@ body {
     font-size: 43px;
   }
   .store-hero-image {
-    min-height: 440px;
+    min-height: 420px;
   }
   .store-hero-description {
-    font-size: 12px;
+    font-size: 15px;
   }
   .store-hero-caption {
     left: 12px;
@@ -601,68 +633,63 @@ body {
     padding: 12px;
   }
   .store-hero-secondary {
-    display: none;
+    font-size: 14px;
   }
   .store-button {
     padding: 14px 17px;
     gap: 15px;
+    font-size: 15px;
   }
   .store-service-strip {
-    font-size: 9px;
+    font-size: 12px;
     gap: 19px;
     letter-spacing: 0;
   }
   .store-section {
-    padding: 48px 20px 0;
+    padding: 38px 20px 0;
   }
   .store-section-heading {
     margin-bottom: 23px;
     gap: 14px;
   }
   .store-section-heading h2 {
-    font-size: 31px;
+    font-size: 28px;
   }
   .store-eyebrow {
-    font-size: 9px;
+    font-size: 11px;
   }
   .store-text-link {
-    font-size: 10px;
+    font-size: 14px;
     gap: 12px;
   }
   .store-category-grid {
     gap: 16px;
   }
   .store-category-caption h3 {
-    font-size: 21px;
-  }
-  .store-category-caption p {
-    font-size: 8px;
+    font-size: 18px;
   }
   .store-category-caption > span {
     display: none;
   }
   .store-product-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 25px 14px;
+    gap: 26px 12px;
   }
   .product-card-info h3 {
-    font-size: 12px;
+    font-size: 14px;
   }
   .product-card-price {
-    font-size: 11px;
-  }
-  .product-card-label {
-    font-size: 8px;
+    font-size: 15px;
   }
   .product-card-badge {
-    top: 8px;
+    bottom: 8px;
     left: 8px;
-    padding: 4px 7px;
-    font-size: 8px;
+    padding: 5px 8px;
+    font-size: 10px;
   }
   .store-story {
-    margin-top: 45px;
-    padding: 45px 24px;
+    margin-top: 38px;
+    padding: 36px 24px;
   }
   .store-care-strip {
     margin-top: 45px;
@@ -670,10 +697,10 @@ body {
     gap: 15px;
   }
   .store-care-strip h2 {
-    font-size: 11px;
+    font-size: 15px;
   }
   .store-care-strip a {
-    font-size: 10px;
+    font-size: 14px;
   }
   .store-care-strip > div + div {
     border: none;
@@ -699,11 +726,11 @@ body {
     flex-direction: column;
   }
   .store-hero-copy {
-    padding: 36px 24px 30px;
+    padding: 30px 24px;
   }
   .store-hero h1 {
     margin-top: 14px;
-    font-size: 48px;
+    font-size: 40px;
   }
   .store-hero-description {
     margin-top: 17px;
@@ -713,46 +740,43 @@ body {
     margin-top: 22px;
   }
   .store-hero-image {
-    min-height: 420px;
+    min-height: 320px;
   }
   .store-hero-image img {
     object-position: center top;
   }
   .store-service-strip {
-    gap: 11px;
-    font-size: 8px;
-    padding: 17px 10px;
+    gap: 10px;
+    font-size: 12px;
+    padding: 15px 10px;
+    text-align: center;
   }
   .store-section-heading {
     align-items: start;
   }
   .store-section-heading h2 {
-    font-size: 28px;
+    font-size: 25px;
   }
   .store-section-heading .store-text-link {
     margin-top: 9px;
   }
   .store-category-grid {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding-bottom: 10px;
-  }
-  .store-category {
-    flex: 0 0 76%;
-    scroll-snap-align: start;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 12px;
   }
   .store-category-image {
-    aspect-ratio: 4/4.4;
+    aspect-ratio: 4/3;
   }
   .store-category-caption h3 {
-    font-size: 26px;
+    font-size: 17px;
   }
   .store-category-caption > span {
     display: grid;
   }
-  .store-category-caption p {
-    font-size: 9px;
+  .store-category-caption > span {
+    width: 26px;
+    height: 26px;
+    font-size: 16px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

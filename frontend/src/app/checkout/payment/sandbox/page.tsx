@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getAuthorizedSession } from "@/lib/auth/server-session";
+import { CheckoutIcon } from "../../checkout-icon";
+import styles from "../../checkout.module.css";
 
 export default async function SandboxPaymentPage({
   searchParams,
@@ -12,27 +14,27 @@ export default async function SandboxPaymentPage({
   if (!session.claims) redirect("/login?reason=session-expired&next=/checkout");
   const { attempt } = await searchParams;
   return (
-    <main className="min-h-screen bg-stone-950 px-6 py-10 text-stone-50">
-      <section className="mx-auto max-w-xl rounded-3xl border border-stone-800 bg-stone-900 p-8">
-        <p className="text-sm tracking-[0.28em] text-amber-300 uppercase">
-          Sandbox payment
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold">Payment session created</h1>
-        <p className="mt-4 text-stone-300">
-          Your order amount and ownership were verified on the server. In the
-          configured provider sandbox, payment completion is confirmed only by
-          its signed webhook—not by this page.
-        </p>
-        <p className="mt-3 text-sm text-stone-500">
-          Session: {attempt ? attempt.slice(-10) : "unavailable"}
-        </p>
-        <Link
-          className="mt-7 inline-flex rounded-full bg-amber-300 px-5 py-3 font-semibold text-stone-950"
-          href="/account"
-        >
-          View your order
-        </Link>
-      </section>
+    <main className={styles.status}>
+      <span className={styles.emptyIcon}>
+        <CheckoutIcon name="card" />
+      </span>
+      <p className={styles.eyebrow}>Test payment session</p>
+      <h1>Your order is saved.</h1>
+      <p>
+        You’ve reached the sandbox payment page. No payment has been collected
+        here, and you don’t need to enter any card details.
+      </p>
+      <p>You can view your order and its payment status in your account.</p>
+      <span className={styles.sandboxTag}>Sandbox · No real payment</span>
+      {attempt ? (
+        <p className={styles.hint}>Session reference: {attempt.slice(-10)}</p>
+      ) : null}
+      <Link className={styles.primary} href="/account">
+        View your order <CheckoutIcon name="arrow" />
+      </Link>
+      <Link className={styles.backLink} href="/shop">
+        Continue shopping
+      </Link>
     </main>
   );
 }

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import styles from "./auth-shell.module.css";
+import { authHref } from "@/lib/auth/navigation";
 
 export function AuthShell({
   eyebrow,
@@ -11,12 +12,14 @@ export function AuthShell({
   description,
   children,
   activeTab,
+  nextPath = "/account",
 }: {
   eyebrow: string;
   title: string;
   description: string;
   children: ReactNode;
   activeTab?: "login" | "register";
+  nextPath?: string;
 }) {
   return (
     <main className={`storefront ${styles.page}`}>
@@ -51,13 +54,13 @@ export function AuthShell({
           {activeTab ? (
             <nav className={styles.tabs} aria-label="Account access">
               <Link
-                href="/login"
+                href={authHref("/login", nextPath)}
                 aria-current={activeTab === "login" ? "page" : undefined}
               >
                 Sign in
               </Link>
               <Link
-                href="/register"
+                href={authHref("/register", nextPath)}
                 aria-current={activeTab === "register" ? "page" : undefined}
               >
                 Create account

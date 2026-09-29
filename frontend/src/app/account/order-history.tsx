@@ -2,6 +2,7 @@
 
 import { FirebaseError } from "firebase/app";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 
 import { formatPkr } from "@/components/store/product-card";
@@ -10,6 +11,7 @@ import { callCommand } from "@/lib/commands/client";
 type Order = {
   id: string;
   status: string;
+  isDemo?: boolean;
   totals: { grandTotal: { amountMinor: number } };
   placedAt: string;
   trackingNumber: string | null;
@@ -206,6 +208,16 @@ export function OrderHistory({
                     ))}
                   </div>
                 </div>
+              ) : null}
+              {order.isDemo ? (
+                <Link
+                  className="mt-4 inline-block text-sm text-amber-300 underline underline-offset-4"
+                  href={`/checkout/confirmation/${order.id}`}
+                >
+                  {order.status === "PENDING_PAYMENT"
+                    ? "Complete demo payment"
+                    : "View demo payment receipt"}
+                </Link>
               ) : null}
               {order.status === "PENDING_PAYMENT" ? (
                 <button

@@ -79,3 +79,181 @@ The owner pointed to the short frock images in the new-arrivals grid and asked f
 `node scripts/curate-staging-adult-collections.mjs --apply` makes the bounded catalog correction, validates documents before writes, preserves before-images in `systemSeeds/adult-collections-v1`, and leaves inventories, orders, customers and product URLs intact. Archived product and category routes return 404. The improved login/registration flow is unchanged. Frontend lint and TypeScript passed; browser verification expectations now cover the four requested collections and the excluded frock/shoe routes.
 
 Correction released on 2026-09-16: source `f24100c`, verified preview `dpl_A2ghabQpqadYEuHzPV3aM2sbrytm`, production `dpl_7joc3WmtKRw22r2Bz3p79ZquvbK5`. Production is READY and assigned to https://bazm-online-frontend.vercel.app. All 16 hosted storefront checks passed at 1440px and 390px, including images, accessibility, category counts, search, size selection and retired routes. The size-selection check now waits for the client-only cart control before clicking, so it cannot click server-rendered controls before hydration. All 10 public smoke paths passed; public home/shop checks confirmed the four requested collections, nineteen products and removal of the rejected items on desktop and mobile. All published-product and active-category schemas passed, with each product assigned to one of the four active collections.
+
+## Men's casual shirts removed — September 23
+
+The four imported casual shirts are archived at the owner's request: Blue & Black
+Check Shirt, Everyday Plaid Shirt, Blue Floral Short-Sleeve Shirt and Teal Check
+Shirt. The Men collection now contains Sand Raahil Kurta, Navy Azlan Kurta and
+Ivory Zayn Waistcoat. There are fifteen published products and eleven new arrivals.
+
+`node scripts/remove-staging-mens-shirts.mjs --apply` applies this bounded edit.
+It validates the four products, clears their homepage flags and saves their prior
+documents in `systemSeeds/remove-mens-casual-shirts-v1` for restoration. Repeating
+the command verifies the archived state and makes no changes. Product records,
+variants, inventory and historical orders are retained. The shared catalog change
+appears in both the local preview and hosted storefront without a frontend deploy.
+
+## Original bag collection added — September 23
+
+Six original Bazm demo bags extend the catalog to 21 products and the Bags
+collection to 11 styles. The photographs were made with the built-in imagegen
+workflow and saved alongside the exact prompts. See [the bag collection record](bags-edit.md)
+for the product list, sample prices, image paths and repeat-safe publishing script.
+
+## Purchase controls, demo checkout and reviews — September 23
+
+The hosted storefront still had the September 16 frontend, while the bag and
+menswear changes were already visible through the shared catalog database.
+This frontend update exposes **Buy it now**, the saved guest cart and the
+Easypaisa, JazzCash and card demo checkout. Buy it now saves the selected variant
+and quantity and opens checkout; signing in merges the guest bag into the account.
+Guests can inspect all payment forms before signing in to complete a demo order.
+See [payments](payments.md) for the API, simulated delay and persistence details.
+
+Product pages now link to **Write a review** beside the rating and in the reviews
+section. `/product/[slug]/review` keeps the product in the sign-in return path,
+shows that customer's delivered purchases for the selected product and reuses
+the existing review service. Reviews remain pending until moderated. The form
+retains its DOM reference during asynchronous saving, prevents duplicate pending
+submissions, preserves text on failure and disables submission until hydration.
+The latter prevents a slow-loading page from submitting review content in a URL.
+
+Validation includes 89 frontend unit tests, lint and TypeScript; browser coverage
+checks saved carts, purchase navigation, payment forms, Paid confirmation and
+delivered-purchase review submission. Hosted checks use a temporary customer and
+product and remove their exact records afterward.
+
+Released on 2026-09-23 at https://bazm-online-frontend.vercel.app, deployment
+`dpl_5vChRna4eeaTHZkdBvqYwaKtxa7a`. The final production build passed and the
+public alias was verified against this deployment. Hosted testing confirmed
+simulated Paid orders for all three payment methods, transaction IDs and order
+confirmations. The corrected review form passed actual hosted submission and
+pending-review persistence checks, including the 390px mobile layout. All ten
+public release smoke paths passed. No real payment provider was activated.
+
+## Easier account access — September 23
+
+Registration now asks for name, email and one password, with the existing password
+rules and show/hide control. Sign-in keeps its email/password form. Account tabs,
+verification, password recovery and reset links preserve the original checkout or
+product-review destination. Return paths are restricted to local pages and reject
+external destinations, control characters and account-page loops.
+
+Email verification now offers **I’ve verified my email** and resend controls. It
+reloads Firebase verification, refreshes the token, synchronizes the customer
+profile and creates the verified server session before returning to checkout.
+Visitors using another browser receive a sign-in link to the same destination.
+Email-action links carry that destination in Firebase's continue URL. Password
+recovery reports connection/delivery failures and still gives the same response
+for an unknown email address. Sign-out waits for its browser handler, checks that
+the server session was removed and offers a retry on failure.
+
+`node scripts/verify-auth-shopping.mjs` exercises actual temporary-account signup,
+verification, cart merging, sign-out, wrong-password feedback, password reset and
+return to checkout against the local staging-backed app. Set `AUTH_FLOW_BASE_URL`
+to the known public portfolio or its Vercel deployment to test hosted behavior.
+The script intercepts email-delivery requests, generates and redeems Firebase
+action codes without sending mail, and removes only its temporary identity and
+cart records. It does not place orders or change product inventory.
+
+Released on 2026-09-23 at https://bazm-online-frontend.vercel.app, deployment
+`dpl_BnKqY7twMefRFCfrP5nRxMfxjPYN`. All 114 frontend unit tests, lint, TypeScript
+and the production build passed. The hosted account flow passed with an actual
+temporary Firebase customer, including verification, saved-cart merging,
+sign-out, wrong-password feedback, password reset and returning to checkout.
+All ten hosted account-page checks passed at 1440px and 390px, including
+accessibility and checkout navigation. Email delivery was intercepted for these
+checks; Firebase action codes were generated and redeemed, and inbox delivery
+was not tested. The temporary customer and carts were removed.
+The public alias was confirmed against the released deployment; all ten public
+smoke paths and desktop/mobile checks of the three-field signup and preserved
+checkout destination passed.
+
+## Customer reviews below each product — September 23
+
+The product review section now follows the supplied reference: a full-width
+heading, overall stars, five rating-distribution bars, Write a review and Ask a
+question actions, review/question tabs and a sort selector. It sits between the
+product details and related pieces, and adapts to desktop, tablet and mobile.
+Empty products show zero reviews without sample endorsements. Published reviews
+retain author names, dates, photos, verified-purchase badges and reporting.
+
+Counts use database aggregations over every published review. Most recent,
+highest-rated and lowest-rated sorting runs on the server with stable cursor
+pagination; switching the sort resets the cursor. Three additive Firestore
+indexes in `firebase/firestore.indexes.json` support the rating queries.
+
+Write a review keeps the existing delivered-purchase and moderation flow. The
+Questions tab lets verified customers submit a private product question through
+the existing support service, with the product name and URL included. Guests
+return to the Questions tab after signing in. Success links to the customer's
+support conversations, where the team can reply. Questions are not presented as
+public reviews or included in review counts.
+
+`node scripts/verify-product-reviews.mjs` checks all three screen sizes,
+accessibility and keyboard tabs, then creates an isolated temporary product with
+12 published and three unpublished review fixtures to check every sort and page.
+It also signs in a temporary customer, sends a product question, checks its
+stored contents and opens the account conversation. It removes only its own
+fixtures afterward. Set `REVIEWS_TEST_BASE_URL` to test a known hosted Bazm URL.
+
+Released on 2026-09-23 at https://bazm-online-frontend.vercel.app, deployment
+`dpl_G9CYiqzvB5h4iHUWxr7o3ANqj4F1`. All 119 frontend unit tests, lint, TypeScript
+and the production build passed. The three additive database indexes finished
+building before release. Hosted browser checks passed at 1440px, 768px and 390px,
+including accessibility, keyboard tabs and the empty state. All three sorting
+modes returned the correct 12 published fixtures across three pages, excluded
+unpublished fixtures and retained complete counts. Actual signed-in question
+submission, database persistence and the account conversation passed. Temporary
+products, reviews, support tickets and test customers were removed. The public
+alias was verified, all ten public smoke paths passed, and desktop/mobile checks
+confirmed the new review section, sorting and question navigation on the live
+store.
+
+## Review reference layout and clearer typography — September 23
+
+The follow-up review design matches the supplied reference more closely: a wide
+product strip with thumbnail, current price and Add to cart sits above Customer
+Reviews; the rating summary and right-aligned actions use wider spacing, and the
+related-products heading is centered. The empty review panel retains its message
+for screen readers while keeping the reference's uncluttered visual space.
+
+The review area uses Arial/Helvetica with bold headings, heavier tabs, counts and
+buttons, larger text and darker secondary copy. Layouts are checked at 1920,
+1440, 768, 390 and 320 pixels. The product strip reuses the existing cart action
+with the currently selected variant and quantity; its request was intercepted in
+the browser check to verify the payload without changing customer carts.
+
+Released at https://bazm-online-frontend.vercel.app as
+`dpl_DEEYtZMUfsKDLp6tcLG4yBqbnWpj`. The nine relevant existing component tests,
+frontend lint, TypeScript and production build passed. Hosted checks passed at
+all five widths, including computed font weights, accessibility, question-tab
+navigation and the product-strip cart payload. The public alias, live mobile
+typography and all ten public smoke paths were verified after promotion.
+
+## Compact product cards and clearer storefront — September 23
+
+The homepage now uses shorter, four-product edits with centered View all links,
+a dedicated bag collection and a smaller hero. A dark announcement strip, visible
+Home navigation and stronger buttons make the shopping paths easier to find.
+Existing Bazm photography, product names and actual prices remain the source of
+the content.
+
+Product grids across the homepage, catalog and related products are capped at
+1280px. They show four columns on desktop, three on tablet and two on phones,
+with consistent 4:5 images. Cards stay about 307px wide even on large displays.
+Category tiles also use a compact grid on phones. Arial/Helvetica storefront
+copy, heavier product names and larger prices address the earlier readability
+feedback; redundant card tags and the hidden image overlay have been removed.
+
+The homepage shows four new arrivals, four bags and four featured pieces; the
+full catalog still contains all 21 published products. Existing cart, Buy it now,
+review, account and demo-payment flows are retained.
+
+Local frontend lint and TypeScript checks passed. The existing storefront audit
+passed all 16 desktop/mobile route and interaction checks, including loaded
+images, accessibility, search, filters and product-size selection. Additional
+layout checks passed at 1920, 1024, 768, 390 and 320px, confirming card dimensions,
+font sizes/weights and no horizontal overflow; related products remain compact
+at 1920px and catalog filters fit at 320px.

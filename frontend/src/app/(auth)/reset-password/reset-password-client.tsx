@@ -14,10 +14,17 @@ import {
 } from "@/lib/auth/auth-client";
 import { getAuthErrorMessage } from "@/lib/auth/auth-errors";
 import { resetPasswordSchema } from "@/lib/auth/auth-schema";
+import { authHref } from "@/lib/auth/navigation";
 
 type ResetErrors = Partial<Record<"password" | "confirmPassword", string>>;
 
-export function ResetPasswordClient({ code }: { code?: string }) {
+export function ResetPasswordClient({
+  code,
+  nextPath = "/account",
+}: {
+  code?: string;
+  nextPath?: string;
+}) {
   const [state, setState] = useState<
     "checking" | "ready" | "submitting" | "complete" | "invalid"
   >(code ? "checking" : "invalid");
@@ -53,7 +60,7 @@ export function ResetPasswordClient({ code }: { code?: string }) {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!code) return;
+    if (!code || state !== "ready") return;
     setErrors({});
     setFormError(undefined);
     const form = new FormData(event.currentTarget);
@@ -108,7 +115,7 @@ export function ResetPasswordClient({ code }: { code?: string }) {
             </AuthMessage>
             <Link
               className="inline-flex h-12 w-full items-center justify-center rounded-full bg-amber-300 font-semibold text-stone-950"
-              href="/login?reset=complete"
+              href={authHref("/login", nextPath, { reset: "complete" })}
             >
               Sign in
             </Link>
@@ -117,7 +124,7 @@ export function ResetPasswordClient({ code }: { code?: string }) {
         {state === "invalid" ? (
           <Link
             className="mt-5 block text-center text-amber-300 underline"
-            href="/forgot-password"
+            href={authHref("/forgot-password", nextPath)}
           >
             Request a new reset link
           </Link>

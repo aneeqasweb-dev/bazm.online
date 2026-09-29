@@ -25,6 +25,10 @@ export default async function Home() {
     getPublishedProductBySlug("rose-ayla-suit"),
   ]);
   const heroProduct = hero?.product ?? newArrivals[0] ?? featured[0];
+  const bagCategory = categories.find((category) => category.slug === "bags");
+  const bags = newArrivals
+    .filter((product) => product.categoryId === bagCategory?.id)
+    .slice(0, 4);
   return (
     <StoreShell>
       <JsonLd data={organizationJsonLd()} id="organization-json-ld" />
@@ -32,22 +36,21 @@ export default async function Home() {
       <main>
         <section className="store-hero">
           <div className="store-hero-copy">
-            <p className="store-eyebrow">THE NEW SEASON EDIT · 2026</p>
+            <p className="store-eyebrow">THE NEW SEASON EDIT</p>
             <h1>
               For every
               <br />
               kind of <em>gathering.</em>
             </h1>
             <p className="store-hero-description">
-              Soft hues. Beautiful details. Pieces that feel like you.
-              <br className="hidden lg:block" /> Discover a fresh expression of
-              Pakistani style.
+              Beautiful outfits. Everyday bags. Thoughtful little details. Find
+              your next favourite in the Bazm collection.
             </p>
             <Link className="store-button" href="/shop">
-              Shop the collection <span aria-hidden="true">↗</span>
+              Shop all products <span aria-hidden="true">↗</span>
             </Link>
-            <Link className="store-hero-secondary" href="#categories">
-              Find your next favourite <span aria-hidden="true">↓</span>
+            <Link className="store-hero-secondary" href="/bags">
+              Explore the bags <span aria-hidden="true">→</span>
             </Link>
           </div>
           {heroProduct ? (
@@ -77,17 +80,17 @@ export default async function Home() {
           ) : null}
         </section>
         <div className="store-service-strip">
-          <Link href="/formal-wear">Thoughtful details</Link>
+          <Link href="/formal-wear">Women’s wear</Link>
           <span aria-hidden="true">✦</span>
-          <Link href="/mens-wear">Timeless silhouettes</Link>
+          <Link href="/mens-wear">Men’s wear</Link>
           <span aria-hidden="true">✦</span>
-          <Link href="/accessories">Finishing touches</Link>
+          <Link href="/bags">Bags & accessories</Link>
         </div>
         <section className="store-section" id="categories">
           <div className="store-section-heading">
             <div>
               <p className="store-eyebrow">A LITTLE SOMETHING FOR YOU</p>
-              <h2>Find your kind of beautiful.</h2>
+              <h2>Shop by collection</h2>
             </div>
             <Link className="store-text-link" href="/shop">
               Explore all <span aria-hidden="true">↗</span>
@@ -114,13 +117,6 @@ export default async function Home() {
                 </div>
                 <div className="store-category-caption">
                   <div>
-                    <p>
-                      {category.slug === "formal-wear"
-                        ? "THE OCCASION EDIT"
-                        : ["mens-wear", "women"].includes(category.slug)
-                          ? "EVERYDAY, ELEVATED"
-                          : "THE FINISHING TOUCH"}
-                    </p>
                     <h3>{category.name}</h3>
                   </div>
                   <span aria-hidden="true">↗</span>
@@ -135,13 +131,10 @@ export default async function Home() {
               <p className="store-eyebrow">JUST LANDED</p>
               <h2>New arrivals</h2>
             </div>
-            <Link className="store-text-link" href="/shop?sort=NEWEST">
-              Shop new in <span aria-hidden="true">↗</span>
-            </Link>
           </div>
           {newArrivals.length ? (
             <div className="store-product-grid">
-              {newArrivals.map((product) => (
+              {newArrivals.slice(0, 4).map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
@@ -150,7 +143,44 @@ export default async function Home() {
               Our next collection is on its way. Explore the current edit below.
             </p>
           )}
+          <div className="store-section-action">
+            <Link
+              className="store-button"
+              href="/shop?sort=NEWEST"
+              aria-label="View all new arrivals"
+            >
+              View all
+            </Link>
+          </div>
         </section>
+        {bags.length ? (
+          <section
+            className="store-section"
+            id="bags-edit"
+            aria-labelledby="bags-edit-heading"
+          >
+            <div className="store-section-heading">
+              <div>
+                <p className="store-eyebrow">A LITTLE EVERYDAY LUXURY</p>
+                <h2 id="bags-edit-heading">Your next favourite bag</h2>
+              </div>
+            </div>
+            <div className="store-product-grid">
+              {bags.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+            <div className="store-section-action">
+              <Link
+                className="store-button"
+                href="/bags"
+                aria-label="View all bags"
+              >
+                View all bags
+              </Link>
+            </div>
+          </section>
+        ) : null}
         <section className="store-story">
           <p className="store-eyebrow">BAZM / A GATHERING</p>
           <h2>
@@ -172,16 +202,22 @@ export default async function Home() {
             <div className="store-section-heading">
               <div>
                 <p className="store-eyebrow">THE BAZM EDIT</p>
-                <h2>Worth a closer look.</h2>
+                <h2>Picked for your wardrobe</h2>
               </div>
-              <Link className="store-text-link" href="/shop">
-                View all pieces <span aria-hidden="true">↗</span>
-              </Link>
             </div>
             <div className="store-product-grid">
               {featured.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
+            </div>
+            <div className="store-section-action">
+              <Link
+                className="store-button"
+                href="/shop"
+                aria-label="View all products"
+              >
+                View all
+              </Link>
             </div>
           </section>
         ) : null}

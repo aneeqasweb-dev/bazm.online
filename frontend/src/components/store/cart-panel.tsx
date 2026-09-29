@@ -23,7 +23,17 @@ export type CartLine = {
   };
 };
 
-export function CartPanel({ items }: { items: CartLine[] }) {
+export function CartPanel({
+  items,
+  guest = false,
+  checkoutHref = "/checkout",
+  checkoutDisabled = false,
+}: {
+  items: CartLine[];
+  guest?: boolean;
+  checkoutHref?: string;
+  checkoutDisabled?: boolean;
+}) {
   const router = useRouter();
   const [pendingId, setPendingId] = useState<string>();
   const [message, setMessage] = useState<string>();
@@ -45,8 +55,12 @@ export function CartPanel({ items }: { items: CartLine[] }) {
         quantity === undefined ? { variantId } : { variantId, quantity },
       );
       router.refresh();
-    } catch {
-      setMessage("Your cart changed. Refresh and try that action again.");
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Your cart changed. Refresh and try that action again.",
+      );
     } finally {
       setPendingId(undefined);
     }
@@ -127,16 +141,18 @@ export function CartPanel({ items }: { items: CartLine[] }) {
                     type="number"
                   />
                 </label>
-                <button
-                  className="text-sm text-stone-300 underline underline-offset-4 hover:text-white disabled:opacity-50"
-                  disabled={pendingId === item.variantId}
-                  onClick={() =>
-                    void mutate("moveCartItemToWishlist", item.variantId)
-                  }
-                  type="button"
-                >
-                  Move to wishlist
-                </button>
+                {!guest ? (
+                  <button
+                    className="text-sm text-stone-300 underline underline-offset-4 hover:text-white disabled:opacity-50"
+                    disabled={pendingId === item.variantId}
+                    onClick={() =>
+                      void mutate("moveCartItemToWishlist", item.variantId)
+                    }
+                    type="button"
+                  >
+                    Move to wishlist
+                  </button>
+                ) : null}
                 <button
                   className="text-sm text-rose-200 underline underline-offset-4 hover:text-rose-100 disabled:opacity-50"
                   disabled={pendingId === item.variantId}
@@ -170,12 +186,22 @@ export function CartPanel({ items }: { items: CartLine[] }) {
             <dd>{formatPkr(subtotal)}</dd>
           </div>
         </dl>
-        <Link
-          className="mt-6 w-full rounded-full bg-amber-300 px-5 py-3 font-semibold text-stone-950"
-          href="/checkout"
-        >
-          Continue to checkout
-        </Link>
+        {checkoutDisabled ? (
+          <button
+            className="mt-6 flex w-full justify-center rounded-full bg-amber-300 px-5 py-3 font-semibold text-stone-950 opacity-50"
+            disabled
+            type="button"
+          >
+            Save your bag to continue
+          </button>
+        ) : (
+          <Link
+            className="mt-6 flex w-full justify-center rounded-full bg-amber-300 px-5 py-3 font-semibold text-stone-950"
+            href={checkoutHref}
+          >
+            Continue to checkout
+          </Link>
+        )}
         <Link
           className="mt-4 block text-center text-sm text-stone-300 underline underline-offset-4"
           href="/shop"

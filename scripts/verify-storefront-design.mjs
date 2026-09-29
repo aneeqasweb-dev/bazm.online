@@ -54,12 +54,12 @@ try {
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
     for (const [path, cards, heading] of [
-      ["/", 16, "For every"],
-      ["/shop", 19, "Shop Bazm"],
+      ["/", 12, "For every"],
+      ["/shop", 21, "Shop Bazm"],
       ["/formal-wear", 6, "Women"],
-      ["/mens-wear", 7, "Men"],
+      ["/mens-wear", 3, "Men"],
       ["/accessories", 1, "Accessories"],
-      ["/bags", 5, "Bags"],
+      ["/bags", 11, "Bags"],
       ["/product/rose-ayla-suit", 4, "Rose Ayla Suit"],
     ]) {
       const response = await page.goto(`${base}${path}`, {
@@ -98,8 +98,18 @@ try {
           .allTextContents();
         assert.deepEqual(labels, ["Women", "Men", "Bags", "Accessories"]);
         await expect(page.locator("#new-arrivals .product-card")).toHaveCount(
-          12,
+          4,
         );
+        await expect(page.locator("#bags-edit .product-card")).toHaveCount(4);
+        await expect(
+          page.getByRole("link", {
+            name: "View all new arrivals",
+            exact: true,
+          }),
+        ).toHaveAttribute("href", "/shop?sort=NEWEST");
+        await expect(
+          page.getByRole("link", { name: "View all bags", exact: true }),
+        ).toHaveAttribute("href", "/bags");
         if (width === 390)
           assert.equal(
             await page
@@ -117,6 +127,14 @@ try {
         await expect(
           page.getByRole("button", { name: "Add 1 to cart", exact: true }),
         ).toBeEnabled();
+        await expect(
+          page.getByRole("button", { name: "Buy it now", exact: true }),
+        ).toBeEnabled();
+        await expect(
+          page
+            .getByRole("link", { name: "Write a review", exact: true })
+            .first(),
+        ).toHaveAttribute("href", "/product/rose-ayla-suit/review");
         await page.getByRole("button", { name: "Medium", exact: true }).click();
         await expect(
           page.getByRole("button", { name: "Medium", exact: true }),
@@ -165,7 +183,7 @@ try {
       page.getByText("No pieces match these filters.", { exact: false }),
     ).toBeVisible();
     await page.getByRole("link", { name: "Clear", exact: true }).click();
-    await expect(page.locator(".product-card")).toHaveCount(19);
+    await expect(page.locator(".product-card")).toHaveCount(21);
     await expect(
       page.getByRole("link", { name: "Discover more", exact: true }),
     ).toHaveCount(0);
@@ -174,12 +192,14 @@ try {
       .evaluateAll((links) => links.map((link) => link.getAttribute("href")));
     assert.equal(
       new Set(allProducts).size,
-      19,
-      "All 19 adult-fashion products are reachable",
+      21,
+      "All 21 current fashion products are reachable",
     );
     assert.ok(
       !allProducts.some((href) =>
-        /frock|tartan-dress|red-shoes|kids-|sneakers/.test(href),
+        /frock|tartan-dress|red-shoes|kids-|sneakers|check-shirt|plaid-shirt|short-sleeve-shirt/.test(
+          href,
+        ),
       ),
     );
     for (const path of [
@@ -191,6 +211,10 @@ try {
       "/product/tartan-dress",
       "/product/short-frock",
       "/product/red-shoes",
+      "/product/blue-black-check-shirt",
+      "/product/man-plaid-shirt",
+      "/product/man-short-sleeve-shirt",
+      "/product/men-check-shirt",
     ]) {
       const response = await page.goto(`${base}${path}`, {
         waitUntil: "domcontentloaded",

@@ -8,6 +8,7 @@ vi.mock("@/lib/auth/auth-client", () => ({
   isGoogleAuthEnabled: () => false,
   loginWithEmail: vi.fn(),
   loginWithGoogle: vi.fn(),
+  logout: vi.fn(),
 }));
 vi.mock("@/lib/auth/register-customer", () => ({
   registerCustomer: vi.fn(),
@@ -15,15 +16,21 @@ vi.mock("@/lib/auth/register-customer", () => ({
 }));
 
 import { LoginForm } from "@/app/(auth)/login/login-form";
-import RegisterPage from "@/app/(auth)/register/page";
+import { RegisterForm } from "@/app/(auth)/register/register-form";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 describe("auth forms before hydration", () => {
+  it("waits for the sign-out handler before enabling the button", () => {
+    const container = document.createElement("div");
+    container.innerHTML = renderToStaticMarkup(<LogoutButton />);
+    expect(container.querySelector("button")?.disabled).toBe(true);
+  });
   it.each([
     [
       "login",
       <LoginForm key="login" nextPath="/account" resetComplete={false} />,
     ],
-    ["registration", <RegisterPage key="registration" />],
+    ["registration", <RegisterForm key="registration" />],
   ])(
     "keeps %s credentials out of URLs and prevents early submission",
     (_name, form) => {

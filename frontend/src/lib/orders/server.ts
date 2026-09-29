@@ -69,6 +69,8 @@ export const listCustomerOrders = cache(async (userId: string) => {
     return {
       id: document.id,
       status: order.status,
+      isDemo: order.isDemo,
+      paymentMethod: order.paymentMethod,
       items: order.items,
       totals: order.totals,
       trackingNumber: order.trackingNumber,

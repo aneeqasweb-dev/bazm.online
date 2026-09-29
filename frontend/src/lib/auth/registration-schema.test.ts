@@ -6,7 +6,6 @@ const validInput = {
   name: "Aneeqa Pervaiz",
   email: "ANEEQA@example.com",
   password: "Secure123",
-  confirmPassword: "Secure123",
 };
 
 describe("registrationSchema", () => {
@@ -16,10 +15,10 @@ describe("registrationSchema", () => {
     );
   });
 
-  it("rejects mismatched passwords", () => {
+  it("rejects weak passwords", () => {
     const result = registrationSchema.safeParse({
       ...validInput,
-      confirmPassword: "Different123",
+      password: "short",
     });
     expect(result.success).toBe(false);
   });

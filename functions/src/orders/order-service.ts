@@ -13,6 +13,7 @@ import {
 } from "@bazm/domain";
 import { FieldValue, type Firestore } from "firebase-admin/firestore";
 import { z } from "zod";
+import { randomUUID } from "node:crypto";
 
 import { EmailService } from "../email/email-service.js";
 import { InventoryService } from "../inventory/inventory-service.js";
@@ -171,8 +172,25 @@ export class OrderService {
     return { id: addressId };
   }
 
-  async checkout(userId: string, input: z.input<typeof checkoutCommandSchema>) {
+  async checkout(
+    userId: string,
+    input: z.input<typeof checkoutCommandSchema>,
+    options: { demoPayment?: boolean } = {},
+  ) {
     const command = checkoutCommandSchema.parse(input);
+    if (
+      !options.demoPayment &&
+      ["EASYPAISA", "JAZZCASH"].includes(command.paymentMethod)
+    )
+      throw new DomainError(
+        "INVALID_ARGUMENT",
+        "Wallet payments are available through demo checkout only.",
+      );
+    if (options.demoPayment && command.paymentMethod === "CASH_ON_DELIVERY")
+      throw new DomainError(
+        "INVALID_ARGUMENT",
+        "Choose a demo payment method.",
+      );
     const registryRef = this.firestore
       .collection("checkoutRequests")
       .doc(`${userId}_${command.idempotencyKey}`);
@@ -304,7 +322,11 @@ export class OrderService {
           command.deliveryMethod,
         );
         const orderRef = this.firestore.collection("orders").doc();
-        const paymentRef = this.firestore.collection("payments").doc();
+        const paymentRef = options.demoPayment
+          ? this.firestore
+              .collection("payments")
+              .doc(`pi_demo_${randomUUID().replaceAll("-", "")}`)
+          : this.firestore.collection("payments").doc();
         const items = lines.map((line) => ({
           productId: line.productId,
           variantId: line.variantId,
@@ -340,6 +362,7 @@ export class OrderService {
           reservationId: reservation.reservationId,
           checkoutIdempotencyKey: command.idempotencyKey,
           paymentMethod: command.paymentMethod,
+          isDemo: options.demoPayment === true,
           trackingNumber: null,
           deliveryMethod: command.deliveryMethod,
           policyVersion: "2026-08",
@@ -354,7 +377,13 @@ export class OrderService {
         transaction.create(paymentRef, {
           orderId: orderRef.id,
           userId,
-          provider: command.paymentMethod === "CARD" ? "SANDBOX" : "COD",
+          provider: options.demoPayment
+            ? "DEMO"
+            : command.paymentMethod === "CARD"
+              ? "SANDBOX"
+              : "COD",
+          method: command.paymentMethod,
+          transactionId: null,
           providerPaymentId: null,
           amount: totals.grandTotal,
           refundedAmount: money(0),
@@ -407,7 +436,8 @@ export class OrderService {
         );
       throw error;
     }
-    if (!result.idempotent) await this.email.sendOrderPlaced(result.orderId);
+    if (!result.idempotent && !options.demoPayment)
+      await this.email.sendOrderPlaced(result.orderId);
     return result;
   }
 

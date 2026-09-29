@@ -26,6 +26,7 @@ import {
   type AuthorizationResult,
 } from "./authorization-client";
 import { createServerSession, deleteServerSession } from "./session-client";
+import { emailActionSettings } from "./email-action-settings";
 
 async function synchronizeAndCreateSession(user: User) {
   const authorization: AuthorizationResult =
@@ -87,17 +88,31 @@ export async function loginWithGoogle() {
 
 export async function logout() {
   const { auth } = getFirebaseClientServices();
-  await Promise.allSettled([deleteServerSession(), signOut(auth)]);
+  await Promise.all([deleteServerSession(), signOut(auth)]);
 }
 
-export async function sendVerificationEmail() {
+export async function sendVerificationEmail(nextPath = "/account") {
   const { auth } = getFirebaseClientServices();
   await auth.authStateReady();
   if (!auth.currentUser) {
     throw new Error("AUTHENTICATION_REQUIRED");
   }
 
-  await sendFirebaseEmailVerification(auth.currentUser);
+  await sendFirebaseEmailVerification(
+    auth.currentUser,
+    emailActionSettings("verify", nextPath),
+  );
+}
+
+export async function checkEmailVerification() {
+  const { auth } = getFirebaseClientServices();
+  await auth.authStateReady();
+  if (!auth.currentUser) return "signed-out" as const;
+  await reload(auth.currentUser);
+  if (!auth.currentUser.emailVerified) return "unverified" as const;
+  await auth.currentUser.getIdToken(true);
+  await synchronizeAndCreateSession(auth.currentUser);
+  return "verified" as const;
 }
 
 export async function applyEmailVerificationCode(code: string) {
@@ -107,14 +122,22 @@ export async function applyEmailVerificationCode(code: string) {
 
   if (auth.currentUser) {
     await reload(auth.currentUser);
+    await auth.currentUser.getIdToken(true);
     return synchronizeAndCreateSession(auth.currentUser);
   }
 
   return null;
 }
 
-export async function requestPasswordReset(email: string) {
-  await sendPasswordResetEmail(getFirebaseClientServices().auth, email);
+export async function requestPasswordReset(
+  email: string,
+  nextPath = "/account",
+) {
+  await sendPasswordResetEmail(
+    getFirebaseClientServices().auth,
+    email,
+    emailActionSettings("reset", nextPath),
+  );
 }
 
 export async function inspectPasswordResetCode(code: string) {

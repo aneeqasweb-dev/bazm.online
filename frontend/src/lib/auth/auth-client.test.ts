@@ -55,6 +55,7 @@ vi.mock("./session-client", () => ({
 }));
 
 import {
+  checkEmailVerification,
   isGoogleAuthConfigured,
   loginWithEmail,
   loginWithGoogle,
@@ -110,6 +111,12 @@ describe("authentication client", () => {
     expect(mocks.deleteServerSession).toHaveBeenCalledOnce();
   });
 
+  it("reports a failed session deletion while still attempting browser sign-out", async () => {
+    mocks.deleteServerSession.mockRejectedValueOnce(new Error("Offline"));
+    await expect(logout()).rejects.toThrow("Offline");
+    expect(mocks.signOut).toHaveBeenCalledOnce();
+  });
+
   it("fails closed when Google login is not configured", async () => {
     expect(isGoogleAuthConfigured(undefined)).toBe(false);
     expect(isGoogleAuthConfigured("false")).toBe(false);
@@ -124,6 +131,9 @@ describe("authentication client", () => {
     expect(mocks.auth.authStateReady).toHaveBeenCalledOnce();
     expect(mocks.sendEmailVerification).toHaveBeenCalledWith(
       mocks.auth.currentUser,
+      expect.objectContaining({
+        url: expect.stringContaining("/verify-email"),
+      }),
     );
   });
 
@@ -133,6 +143,30 @@ describe("authentication client", () => {
     expect(mocks.sendPasswordResetEmail).toHaveBeenCalledWith(
       mocks.auth,
       "customer@example.com",
+      expect.objectContaining({
+        url: expect.stringContaining("/login?reset=complete"),
+      }),
     );
+  });
+
+  it("does not create a verified session until Firebase confirms the email", async () => {
+    expect(await checkEmailVerification()).toBe("signed-out");
+    mocks.auth.currentUser = { uid: "customer-1", emailVerified: false };
+    expect(await checkEmailVerification()).toBe("unverified");
+    expect(mocks.createServerSession).not.toHaveBeenCalled();
+  });
+
+  it("refreshes the verification claim before synchronizing the profile and session", async () => {
+    mocks.auth.currentUser = {
+      uid: "customer-1",
+      emailVerified: true,
+      getIdToken: mocks.getIdToken,
+    };
+    expect(await checkEmailVerification()).toBe("verified");
+    expect(mocks.getIdToken).toHaveBeenCalledWith(true);
+    expect(mocks.getIdToken.mock.invocationCallOrder[0]).toBeLessThan(
+      mocks.synchronizeAuthorization.mock.invocationCallOrder[0],
+    );
+    expect(mocks.createServerSession).toHaveBeenCalledWith("fresh-id-token");
   });
 });

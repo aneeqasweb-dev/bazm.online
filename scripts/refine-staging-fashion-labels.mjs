@@ -22,9 +22,6 @@ const db = getFirestore(
   }),
 );
 const labels = [
-  ["market-man-plaid-shirt", "Everyday Plaid Shirt"],
-  ["market-man-short-sleeve-shirt", "Blue Floral Short-Sleeve Shirt"],
-  ["market-men-check-shirt", "Teal Check Shirt"],
   ["market-golden-shoes-woman", "Gold Evening Heels"],
   ["market-women-handbag-black", "Black Structured Handbag"],
 ];

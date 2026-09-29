@@ -44,7 +44,7 @@ function StoreIcon({ name }: { name: "search" | "heart" | "account" | "bag" }) {
 }
 
 const collections = [
-  ["Shop all", "/shop"],
+  ["All products", "/shop"],
   ["New arrivals", "/shop?sort=NEWEST"],
   ["Women", "/formal-wear"],
   ["Men", "/mens-wear"],
@@ -56,8 +56,8 @@ export function StoreShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="storefront min-h-screen bg-stone-950 text-stone-50">
       <div className="store-announcement">
-        Rooted in tradition. Made for today.{" "}
-        <span>Discover the new edit →</span>
+        New pieces. New favourites.{" "}
+        <Link href="/shop?sort=NEWEST">Explore new arrivals →</Link>
       </div>
       <header className="store-header">
         <nav aria-label="Primary navigation" className="store-nav">
@@ -65,6 +65,7 @@ export function StoreShell({ children }: { children: React.ReactNode }) {
             bazm<span>THE ART OF GATHERING</span>
           </Link>
           <div className="store-desktop-links">
+            <Link href="/">Home</Link>
             {collections.map(([label, href]) => (
               <Link key={href} href={href}>
                 {label}
@@ -91,6 +92,7 @@ export function StoreShell({ children }: { children: React.ReactNode }) {
           </div>
         </nav>
         <nav aria-label="Collection navigation" className="store-mobile-links">
+          <Link href="/">Home</Link>
           {collections.map(([label, href]) => (
             <Link key={href} href={href}>
               {label}

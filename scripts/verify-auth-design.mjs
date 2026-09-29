@@ -134,6 +134,27 @@ try {
       .getByRole("link", { name: "Sign in" })
       .click();
     await expect(page).toHaveURL(`${base}/login`);
+    await page.goto(`${base}/login?next=%2Fcheckout`, {
+      waitUntil: "networkidle",
+    });
+    await page
+      .getByRole("navigation", { name: "Account access" })
+      .getByRole("link", { name: "Create account", exact: true })
+      .click();
+    await expect(page).toHaveURL(`${base}/register?next=%2Fcheckout`);
+    await expect(page.locator("form input")).toHaveCount(3);
+    await page
+      .getByRole("navigation", { name: "Account access" })
+      .getByRole("link", { name: "Sign in", exact: true })
+      .click();
+    await expect(page).toHaveURL(`${base}/login?next=%2Fcheckout`);
+    await page
+      .getByRole("link", { name: "Forgot password?", exact: true })
+      .click();
+    await expect(page).toHaveURL(`${base}/forgot-password?next=%2Fcheckout`);
+    await expect(
+      page.getByRole("link", { name: "← Back to sign in", exact: true }),
+    ).toHaveAttribute("href", "/login?next=%2Fcheckout");
     assert.deepEqual(errors, []);
     await context.close();
   }

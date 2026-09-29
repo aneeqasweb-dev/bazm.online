@@ -115,7 +115,10 @@ function ReplyForm({ ticketId }: { ticketId: string }) {
 
 export function SupportCenter({ tickets }: { tickets: Ticket[] }) {
   return (
-    <section className="mt-10 border-t border-stone-800 pt-8">
+    <section
+      className="mt-10 border-t border-stone-800 pt-8"
+      id="support-requests"
+    >
       <p className="text-sm tracking-[0.2em] text-amber-300 uppercase">
         Customer care
       </p>

@@ -2,6 +2,8 @@ import { FirebaseError } from "firebase/app";
 
 const AUTH_ERROR_MESSAGES: Record<string, string> = {
   "auth/invalid-credential": "The email or password is incorrect.",
+  "auth/wrong-password": "The email or password is incorrect.",
+  "auth/user-not-found": "The email or password is incorrect.",
   "auth/invalid-email": "Enter a valid email address.",
   "auth/user-disabled":
     "This account is disabled. Contact support if you think this is a mistake.",

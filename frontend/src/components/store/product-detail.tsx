@@ -6,9 +6,11 @@ import type {
 } from "@bazm/domain";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { formatPkr } from "@/components/store/product-card";
+import reviewStyles from "./product-reviews.module.css";
 
 const CartButton = dynamic(
   () =>
@@ -96,150 +98,223 @@ export function ProductDetail({
   };
   if (!selected || !visibleImage) return null;
   return (
-    <div className="grid gap-10 lg:grid-cols-2">
-      <section aria-label="Product images" className="grid gap-4">
-        <div className="relative aspect-[3/4] overflow-hidden bg-stone-800">
-          <Image
-            alt={visibleImage.alt}
-            className="object-cover"
-            fill
-            preload
-            quality={80}
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            src={visibleImage.url}
-          />
-        </div>
-        {gallery.length > 1 ? (
-          <div className="flex gap-3 overflow-x-auto pb-1">
-            {gallery.map((image) => (
-              <button
-                aria-pressed={image.path === visibleImage.path}
-                className="relative size-20 shrink-0 overflow-hidden rounded-lg border border-stone-700 aria-pressed:border-amber-300"
-                key={image.path}
-                onClick={() => setImagePath(image.path)}
-                type="button"
-              >
-                <Image
-                  alt={`View ${image.alt}`}
-                  className="object-cover"
-                  fill
-                  quality={60}
-                  sizes="80px"
-                  src={image.url}
-                />
-              </button>
-            ))}
+    <>
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-2">
+        <section aria-label="Product images" className="grid gap-4">
+          <div className="relative aspect-[3/4] overflow-hidden bg-stone-800">
+            <Image
+              alt={visibleImage.alt}
+              className="object-cover"
+              fill
+              preload
+              quality={80}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              src={visibleImage.url}
+            />
           </div>
-        ) : null}
-      </section>
-      <section>
-        <p className="text-sm tracking-[0.2em] text-amber-300 uppercase">
-          {product.brand}
-        </p>
-        <h1 className="product-detail-title mt-3 text-4xl">{product.name}</h1>
-        {product.ratingSummary.count ? (
-          <p className="mt-3 text-sm text-stone-300">
-            ★ {product.ratingSummary.average.toFixed(1)} from{" "}
-            {product.ratingSummary.count} verified reviews
+          {gallery.length > 1 ? (
+            <div className="flex gap-3 overflow-x-auto pb-1">
+              {gallery.map((image) => (
+                <button
+                  aria-pressed={image.path === visibleImage.path}
+                  className="relative size-20 shrink-0 overflow-hidden rounded-lg border border-stone-700 aria-pressed:border-amber-300"
+                  key={image.path}
+                  onClick={() => setImagePath(image.path)}
+                  type="button"
+                >
+                  <Image
+                    alt={`View ${image.alt}`}
+                    className="object-cover"
+                    fill
+                    quality={60}
+                    sizes="80px"
+                    src={image.url}
+                  />
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </section>
+        <section>
+          <p className="text-sm tracking-[0.2em] text-amber-300 uppercase">
+            {product.brand}
           </p>
-        ) : (
+          <h1 className="product-detail-title mt-3 text-4xl">{product.name}</h1>
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+            <Link className="text-stone-400 hover:underline" href="#reviews">
+              {product.ratingSummary.count
+                ? `★ ${product.ratingSummary.average.toFixed(1)} · ${product.ratingSummary.count} verified reviews`
+                : "No reviews yet"}
+            </Link>
+            <Link
+              className="font-medium text-amber-300 underline underline-offset-4"
+              href={`/product/${product.slug}/review`}
+            >
+              Write a review
+            </Link>
+          </div>
+          <p className="mt-4 text-2xl text-amber-200">
+            {formatPkr(price.amountMinor)}
+          </p>
+          <p className="mt-6 leading-7 text-stone-300">{product.description}</p>
+          <fieldset className="mt-8">
+            <legend className="font-medium">Color</legend>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {colors.map((color) => {
+                const selectable = variants.some(
+                  (variant) => variant.color === color && variant.isActive,
+                );
+                return (
+                  <button
+                    aria-pressed={selected.color === color}
+                    className="rounded-full border border-stone-700 px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40 aria-pressed:border-amber-300"
+                    disabled={!selectable}
+                    key={color}
+                    onClick={() =>
+                      choose(
+                        color,
+                        variants.find(
+                          (variant) =>
+                            variant.color === color && variant.isActive,
+                        )?.size ?? selected.size,
+                      )
+                    }
+                    type="button"
+                  >
+                    {color}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+          <fieldset className="mt-6">
+            <legend className="font-medium">Size</legend>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {sizes.map((size) => {
+                const variant = variants.find(
+                  (item) => item.color === selected.color && item.size === size,
+                );
+                return (
+                  <button
+                    aria-pressed={selected.size === size}
+                    className="rounded-full border border-stone-700 px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40 aria-pressed:border-amber-300"
+                    disabled={!variant?.isActive}
+                    key={size}
+                    onClick={() => choose(selected.color, size)}
+                    type="button"
+                  >
+                    {size}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+          <p aria-live="polite" className="mt-4 text-sm text-emerald-200">
+            {selected.isActive
+              ? "Available in your selected size"
+              : "This combination is unavailable."}
+          </p>
+          <label
+            className="mt-6 block w-28 text-sm text-stone-300"
+            htmlFor="product-quantity"
+          >
+            Quantity
+            <input
+              className="field"
+              disabled={!selected.isActive}
+              id="product-quantity"
+              max="999"
+              min="1"
+              onChange={(event) =>
+                setQuantity(Math.max(1, Number(event.target.value) || 1))
+              }
+              type="number"
+              value={quantity}
+            />
+          </label>
+          <div className="mt-8 grid max-w-xl gap-3">
+            <CartButton
+              disabled={
+                !selected.isActive ||
+                !Number.isInteger(quantity) ||
+                quantity > 999
+              }
+              productId={product.id}
+              quantity={quantity}
+              variantId={selected.id}
+            />
+            <div>
+              <WishlistButton productId={product.id} />
+            </div>
+          </div>
           <p className="mt-3 text-sm text-stone-400">
-            Reviews are coming soon.
+            Your shopping bag is saved automatically. Sign in when you’re ready
+            to check out. Final availability is confirmed at checkout.
           </p>
-        )}
-        <p className="mt-4 text-2xl text-amber-200">
-          {formatPkr(price.amountMinor)}
-        </p>
-        <p className="mt-6 leading-7 text-stone-300">{product.description}</p>
-        <fieldset className="mt-8">
-          <legend className="font-medium">Color</legend>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {colors.map((color) => {
-              const selectable = variants.some(
-                (variant) => variant.color === color && variant.isActive,
-              );
-              return (
-                <button
-                  aria-pressed={selected.color === color}
-                  className="rounded-full border border-stone-700 px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40 aria-pressed:border-amber-300"
-                  disabled={!selectable}
-                  key={color}
-                  onClick={() =>
-                    choose(
-                      color,
-                      variants.find(
-                        (variant) =>
-                          variant.color === color && variant.isActive,
-                      )?.size ?? selected.size,
-                    )
-                  }
-                  type="button"
-                >
-                  {color}
-                </button>
-              );
-            })}
+          <div className="mt-6 border-t border-stone-700 pt-5">
+            <p className="text-xs font-medium tracking-widest uppercase">
+              Demo payment options
+            </p>
+            <ul
+              className="mt-3 flex flex-wrap gap-2 text-xs"
+              aria-label="Payment options"
+            >
+              {["Easypaisa", "JazzCash", "Credit / debit card"].map(
+                (method) => (
+                  <li
+                    className="rounded-lg border border-stone-700 bg-stone-900 px-3 py-2"
+                    key={method}
+                  >
+                    {method}
+                  </li>
+                ),
+              )}
+            </ul>
+            <p className="mt-3 text-xs text-stone-400">
+              Choose your payment method at checkout. No real money is charged.
+            </p>
           </div>
-        </fieldset>
-        <fieldset className="mt-6">
-          <legend className="font-medium">Size</legend>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {sizes.map((size) => {
-              const variant = variants.find(
-                (item) => item.color === selected.color && item.size === size,
-              );
-              return (
-                <button
-                  aria-pressed={selected.size === size}
-                  className="rounded-full border border-stone-700 px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40 aria-pressed:border-amber-300"
-                  disabled={!variant?.isActive}
-                  key={size}
-                  onClick={() => choose(selected.color, size)}
-                  type="button"
-                >
-                  {size}
-                </button>
-              );
-            })}
-          </div>
-        </fieldset>
-        <p aria-live="polite" className="mt-4 text-sm text-emerald-200">
-          {selected.isActive
-            ? "Available in your selected size"
-            : "This combination is unavailable."}
-        </p>
-        <label
-          className="mt-6 block w-28 text-sm text-stone-300"
-          htmlFor="product-quantity"
+        </section>
+      </div>
+      <div className={reviewStyles.productBarWrap}>
+        <aside
+          className={reviewStyles.productBar}
+          aria-label="Selected product"
         >
-          Quantity
-          <input
-            className="field"
-            disabled={!selected.isActive}
-            id="product-quantity"
-            max="999"
-            min="1"
-            onChange={(event) =>
-              setQuantity(Math.max(1, Number(event.target.value) || 1))
-            }
-            type="number"
-            value={quantity}
-          />
-        </label>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <CartButton
-            disabled={!selected.isActive}
-            productId={product.id}
-            quantity={quantity}
-            variantId={selected.id}
-          />
-          <WishlistButton productId={product.id} />
-        </div>
-        <p className="mt-3 text-sm text-stone-400">
-          Sign in to save your shopping bag and favourites. Final availability
-          is confirmed at checkout.
-        </p>
-      </section>
-    </div>
+          <div className={reviewStyles.productThumb}>
+            <Image
+              alt={visibleImage.alt}
+              src={visibleImage.url}
+              fill
+              sizes="76px"
+              className="object-contain"
+              quality={60}
+            />
+          </div>
+          <div>
+            <p className={reviewStyles.productName}>{product.name}</p>
+            <p className={reviewStyles.productPrice}>
+              {formatPkr(price.amountMinor)}
+            </p>
+            <p className={reviewStyles.productSelection}>
+              {selected.color} · {selected.size} · Qty {quantity}
+            </p>
+          </div>
+          <div>
+            <CartButton
+              compact
+              disabled={
+                !selected.isActive ||
+                !Number.isInteger(quantity) ||
+                quantity > 999
+              }
+              productId={product.id}
+              quantity={quantity}
+              variantId={selected.id}
+            />
+          </div>
+        </aside>
+      </div>
+    </>
   );
 }

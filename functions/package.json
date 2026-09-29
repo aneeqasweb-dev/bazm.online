@@ -5,6 +5,10 @@
   "type": "module",
   "main": "lib/index.js",
   "exports": {
+    "./demo-payments": {
+      "types": "./src/payments/demo-payment-service.ts",
+      "default": "./lib/payments/demo-payment-service.js"
+    },
     "./orders": {
       "types": "./src/orders/order-service.ts",
       "default": "./lib/orders/order-service.js"

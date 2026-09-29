@@ -17,6 +17,7 @@ import {
 import { getAuthErrorMessage } from "@/lib/auth/auth-errors";
 import { loginSchema } from "@/lib/auth/auth-schema";
 import { useAuthReady } from "@/lib/auth/use-auth-ready";
+import { authHref } from "@/lib/auth/navigation";
 
 type LoginFieldErrors = Partial<Record<"email" | "password", string>>;
 
@@ -38,7 +39,9 @@ export function LoginForm({
   async function finishLogin(action: () => ReturnType<typeof loginWithEmail>) {
     try {
       const result = await action();
-      router.replace(result.emailVerified ? nextPath : "/verify-email");
+      router.replace(
+        result.emailVerified ? nextPath : authHref("/verify-email", nextPath),
+      );
       router.refresh();
     } catch (error) {
       setFormError(
@@ -80,6 +83,7 @@ export function LoginForm({
   }
 
   async function handleGoogleLogin() {
+    if (!ready || pending !== null) return;
     setFormError(undefined);
     setPending("google");
     await finishLogin(loginWithGoogle);
@@ -88,9 +92,14 @@ export function LoginForm({
   return (
     <AuthShell
       activeTab="login"
+      nextPath={nextPath}
       eyebrow="Your account"
       title="Welcome back"
-      description="Your favourites, orders and next great outfit are waiting."
+      description={
+        nextPath === "/checkout"
+          ? "Sign in to finish your order. Your shopping bag is saved."
+          : "Sign in with your email and password to pick up where you left off."
+      }
     >
       <div className="space-y-3 empty:hidden [&:not(:empty)]:mt-6">
         {reason === "session-expired" ? (
@@ -133,7 +142,7 @@ export function LoginForm({
         <div className="text-right">
           <Link
             className="text-sm text-amber-300 underline"
-            href="/forgot-password"
+            href={authHref("/forgot-password", nextPath)}
           >
             Forgot password?
           </Link>
@@ -161,7 +170,10 @@ export function LoginForm({
 
       <p className="mt-8 text-center text-sm text-stone-400">
         New to Bazm?{" "}
-        <Link className="text-amber-300 underline" href="/register">
+        <Link
+          className="text-amber-300 underline"
+          href={authHref("/register", nextPath)}
+        >
           Create an account
         </Link>
       </p>

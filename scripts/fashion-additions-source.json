@@ -60,46 +60,6 @@
     "sourceImage": "https://cdn.dummyjson.com/product-images/womens-dresses/dress-pea/1.webp"
   },
   {
-    "sourceId": 83,
-    "slug": "blue-black-check-shirt",
-    "name": "Blue & Black Check Shirt",
-    "description": "The Blue & Black Check Shirt is a stylish and comfortable men's shirt featuring a classic check pattern. Made from high-quality fabric, it's suitable for both casual and semi-formal occasions.",
-    "categoryId": "demo-mens-wear",
-    "price": 2490,
-    "color": "Blue & Black",
-    "sourceImage": "https://cdn.dummyjson.com/product-images/mens-shirts/blue-&-black-check-shirt/1.webp"
-  },
-  {
-    "sourceId": 85,
-    "slug": "man-plaid-shirt",
-    "name": "Everyday Plaid Shirt",
-    "description": "The Man Plaid Shirt is a timeless and versatile men's shirt with a classic plaid pattern. Its comfortable fit and casual style make it a wardrobe essential for various occasions.",
-    "categoryId": "demo-mens-wear",
-    "price": 2690,
-    "color": "Plaid",
-    "sourceImage": "https://cdn.dummyjson.com/product-images/mens-shirts/man-plaid-shirt/1.webp"
-  },
-  {
-    "sourceId": 86,
-    "slug": "man-short-sleeve-shirt",
-    "name": "Blue Floral Short-Sleeve Shirt",
-    "description": "The Man Short Sleeve Shirt is a breezy and stylish option for warm days. With a comfortable fit and short sleeves, it's perfect for a laid-back yet polished look.",
-    "categoryId": "demo-mens-wear",
-    "price": 1990,
-    "color": "As shown",
-    "sourceImage": "https://cdn.dummyjson.com/product-images/mens-shirts/man-short-sleeve-shirt/1.webp"
-  },
-  {
-    "sourceId": 87,
-    "slug": "men-check-shirt",
-    "name": "Teal Check Shirt",
-    "description": "The Men Check Shirt is a classic and versatile shirt featuring a stylish check pattern. Suitable for various occasions, it adds a smart and polished touch to your wardrobe.",
-    "categoryId": "demo-mens-wear",
-    "price": 2390,
-    "color": "Check",
-    "sourceImage": "https://cdn.dummyjson.com/product-images/mens-shirts/men-check-shirt/1.webp"
-  },
-  {
     "sourceId": 185,
     "slug": "black-brown-slipper",
     "name": "Black & Tan Court Heels",

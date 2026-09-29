@@ -3,9 +3,10 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { callCommand } from "@/lib/commands/client";
+import { useAuthReady } from "@/lib/auth/use-auth-ready";
 import { uploadMedia } from "@/lib/media/client";
 import { validateMediaFile } from "@/lib/media/policy";
 
@@ -82,21 +83,25 @@ function statusLabel(status: string) {
   return status.toLowerCase().replaceAll("_", " ");
 }
 
-function ReviewForm({ item }: { item: ReviewItem }) {
+export function ReviewForm({ item }: { item: ReviewItem }) {
   const router = useRouter();
+  const ready = useAuthReady();
   const existing = item.existingReview;
   const [message, setMessage] = useState<string>();
   const [pending, setPending] = useState(false);
+  const busy = useRef(false);
   const canSubmit = !existing || existing.canEdit;
   const fieldPrefix = `${item.orderId}-${item.variantId}`;
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!canSubmit) return;
+    if (!ready || !canSubmit || busy.current) return;
+    busy.current = true;
+    const formElement = event.currentTarget;
     setPending(true);
     setMessage(undefined);
     try {
-      const form = new FormData(event.currentTarget);
+      const form = new FormData(formElement);
       const files = form.getAll("images").filter((file): file is File => {
         return file instanceof File && file.size > 0;
       });
@@ -128,12 +133,13 @@ function ReviewForm({ item }: { item: ReviewItem }) {
           ...reviewInput,
         });
         setMessage("Review submitted for moderation.");
-        event.currentTarget.reset();
+        formElement.reset();
       }
       router.refresh();
     } catch (error) {
       setMessage(errorMessage(error));
     } finally {
+      busy.current = false;
       setPending(false);
     }
   }
@@ -183,64 +189,84 @@ function ReviewForm({ item }: { item: ReviewItem }) {
           {new Date(existing.editableUntil).toLocaleDateString("en-PK")}.
         </p>
       ) : (
-        <form className="mt-4 grid gap-3" onSubmit={submit}>
-          <label
-            className="text-sm text-stone-300"
-            htmlFor={`${fieldPrefix}-rating`}
-          >
-            Rating
-            <select
-              className="field"
-              defaultValue={existing?.rating ?? 5}
-              id={`${fieldPrefix}-rating`}
-              name="rating"
-              required
+        <form className="mt-4" method="post" onSubmit={submit}>
+          <fieldset className="grid gap-3" disabled={!ready || pending}>
+            <label
+              className="text-sm text-stone-300"
+              htmlFor={`${fieldPrefix}-rating`}
             >
-              {[5, 4, 3, 2, 1].map((rating) => (
-                <option key={rating} value={rating}>
-                  {rating} star{rating === 1 ? "" : "s"}
-                </option>
-              ))}
-            </select>
-          </label>
-          <input
-            className="field"
-            defaultValue={existing?.title ?? ""}
-            maxLength={120}
-            minLength={3}
-            name="title"
-            placeholder="Review title (optional)"
-          />
-          <textarea
-            className="field min-h-28"
-            defaultValue={existing?.content ?? ""}
-            maxLength={2000}
-            minLength={10}
-            name="content"
-            placeholder="Share fit, quality, fabric, delivery…"
-            required
-          />
-          <label
-            className="text-sm text-stone-300"
-            htmlFor={`${fieldPrefix}-images`}
-          >
-            Optional images
-            <input
-              accept="image/jpeg,image/png,image/webp"
-              className="field"
-              id={`${fieldPrefix}-images`}
-              multiple
-              name="images"
-              type="file"
-            />
-          </label>
-          <button
-            className="rounded-full bg-amber-300 px-5 py-3 font-semibold text-stone-950 disabled:opacity-60"
-            disabled={pending}
-            type="submit"
-          >
-            {pending ? "Saving…" : existing ? "Update review" : "Submit review"}
-          </button>
+              Rating
+              <select
+                className="field"
+                defaultValue={existing?.rating ?? 5}
+                id={`${fieldPrefix}-rating`}
+                name="rating"
+                required
+              >
+                {[5, 4, 3, 2, 1].map((rating) => (
+                  <option key={rating} value={rating}>
+                    {rating} star{rating === 1 ? "" : "s"}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label
+              className="text-sm text-stone-300"
+              htmlFor={`${fieldPrefix}-title`}
+            >
+              Review title (optional)
+              <input
+                className="field"
+                defaultValue={existing?.title ?? ""}
+                id={`${fieldPrefix}-title`}
+                maxLength={120}
+                minLength={3}
+                name="title"
+                placeholder="A few words about your experience"
+              />
+            </label>
+            <label
+              className="text-sm text-stone-300"
+              htmlFor={`${fieldPrefix}-content`}
+            >
+              Your review
+              <textarea
+                className="field min-h-28"
+                defaultValue={existing?.content ?? ""}
+                id={`${fieldPrefix}-content`}
+                maxLength={2000}
+                minLength={10}
+                name="content"
+                placeholder="Tell us about the quality, style and your experience…"
+                required
+              />
+            </label>
+            <label
+              className="text-sm text-stone-300"
+              htmlFor={`${fieldPrefix}-images`}
+            >
+              Optional images
+              <input
+                accept="image/jpeg,image/png,image/webp"
+                className="field"
+                id={`${fieldPrefix}-images`}
+                multiple
+                name="images"
+                type="file"
+              />
+            </label>
+            <button
+              className="rounded-full bg-amber-300 px-5 py-3 font-semibold text-stone-950 disabled:opacity-60"
+              disabled={!ready || pending}
+              type="submit"
+            >
+              {pending
+                ? "Saving…"
+                : existing
+                  ? "Update review"
+                  : "Submit review"}
+            </button>
+          </fieldset>
         </form>
       )}
       {message ? (

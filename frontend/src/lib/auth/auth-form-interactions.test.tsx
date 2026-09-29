@@ -24,7 +24,7 @@ vi.mock("@/lib/auth/register-customer", () => ({
 }));
 
 import { LoginForm } from "@/app/(auth)/login/login-form";
-import RegisterPage from "@/app/(auth)/register/page";
+import { RegisterForm } from "@/app/(auth)/register/register-form";
 
 let container: HTMLDivElement;
 let root: Root;
@@ -59,10 +59,29 @@ const credentials = { email: "shopper@example.test", password: "SamplePass42" };
 const signup = {
   ...credentials,
   name: "Sample Shopper",
-  confirmPassword: credentials.password,
 };
 
 describe("account access interactions", () => {
+  it("preserves the checkout destination in sign-up and recovery links", async () => {
+    await render(<LoginForm nextPath="/checkout" resetComplete={false} />);
+    expect(
+      container.querySelector('a[href="/register?next=%2Fcheckout"]'),
+    ).not.toBeNull();
+    expect(
+      container.querySelector('a[href="/forgot-password?next=%2Fcheckout"]'),
+    ).not.toBeNull();
+    await render(<RegisterForm nextPath="/checkout" />);
+    expect(
+      container.querySelector('a[href="/login?next=%2Fcheckout"]'),
+    ).not.toBeNull();
+    mocks.register.mockResolvedValue({ verificationSent: true });
+    fill(signup);
+    await submit();
+    expect(mocks.register).toHaveBeenCalledWith(signup, "/checkout");
+    expect(
+      container.querySelector('a[href="/verify-email?next=%2Fcheckout"]'),
+    ).not.toBeNull();
+  });
   it("reveals and hides a password without submitting or changing it", async () => {
     await render(<LoginForm nextPath="/account" resetComplete={false} />);
     fill(credentials);
@@ -91,7 +110,7 @@ describe("account access interactions", () => {
   });
   it.each([
     [true, "/checkout"],
-    [false, "/verify-email"],
+    [false, "/verify-email?next=%2Fcheckout"],
   ])(
     "routes verified=%s customers correctly after sign-in",
     async (emailVerified, destination) => {
@@ -132,22 +151,23 @@ describe("account access interactions", () => {
         ?.disabled,
     ).toBe(true);
   });
-  it("helps the customer correct a mismatched confirmation", async () => {
-    await render(<RegisterPage />);
-    fill({ ...signup, confirmPassword: "Different42" });
+  it("keeps registration to three fields and helps correct a weak password", async () => {
+    await render(<RegisterForm />);
+    expect(container.querySelectorAll("input")).toHaveLength(3);
+    fill({ ...signup, password: "weak" });
     await submit();
-    expect(document.activeElement).toBe(field("confirmPassword"));
-    expect(field("confirmPassword").getAttribute("aria-invalid")).toBe("true");
+    expect(document.activeElement).toBe(field("password"));
+    expect(field("password").getAttribute("aria-invalid")).toBe("true");
     expect(mocks.register).not.toHaveBeenCalled();
   });
   it.each([true, false])(
     "provides the verification next step when email sent=%s",
     async (verificationSent) => {
       mocks.register.mockResolvedValue({ verificationSent });
-      await render(<RegisterPage />);
+      await render(<RegisterForm />);
       fill(signup);
       await submit();
-      expect(mocks.register).toHaveBeenCalledWith(signup);
+      expect(mocks.register).toHaveBeenCalledWith(signup, "/account");
       expect(container.querySelector("h1")?.textContent).toBe(
         "You’re almost there",
       );

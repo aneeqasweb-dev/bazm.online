@@ -20,6 +20,9 @@ vi.mock("@/lib/firebase/client", () => ({
 vi.mock("./authorization-client", () => ({
   completeRegistration: mocks.completeRegistration,
 }));
+vi.mock("@/lib/env/client", () => ({
+  getFirebaseClientEnv: () => ({ NEXT_PUBLIC_APP_URL: "https://bazm.example" }),
+}));
 vi.mock("./session-client", () => ({
   createServerSession: mocks.createServerSession,
 }));
@@ -30,7 +33,6 @@ const input = {
   name: "Test Customer",
   email: "customer@example.com",
   password: "Secure123",
-  confirmPassword: "Secure123",
 };
 
 describe("customer registration", () => {

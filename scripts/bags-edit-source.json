@@ -1,0 +1,56 @@
+[
+  {
+    "slug": "ivory-meher-top-handle-bag",
+    "name": "Ivory Meher Top-Handle Bag",
+    "color": "Ivory",
+    "code": "MEHER-IVR",
+    "priceMinor": 649000,
+    "tags": ["bags", "top-handle", "structured", "ivory", "satchel"],
+    "description": "An elegant ivory top-handle bag with a sculpted silhouette, smooth leather-look finish and understated gold-tone clasp. A detachable shoulder strap takes it from daytime gatherings to evening plans."
+  },
+  {
+    "slug": "burgundy-ayla-crescent-bag",
+    "name": "Burgundy Ayla Crescent Bag",
+    "color": "Burgundy",
+    "code": "AYLA-BRG",
+    "priceMinor": 479000,
+    "tags": ["bags", "shoulder", "crescent", "burgundy", "everyday"],
+    "description": "A softly curved crescent bag in rich burgundy with a slender adjustable strap and a discreet zip closure. The smooth leather-look texture and warm gold-tone buckle bring a polished touch to everyday dressing."
+  },
+  {
+    "slug": "mocha-mira-woven-tote",
+    "name": "Mocha Mira Woven Tote",
+    "color": "Mocha",
+    "code": "MIRA-MCH",
+    "priceMinor": 699000,
+    "tags": ["bags", "tote", "woven", "mocha", "everyday"],
+    "description": "Rich mocha tones and an intricate woven texture come together in a softly structured tote. Rounded shoulder handles and a roomy silhouette make this an easy companion for workdays, shopping and weekend plans."
+  },
+  {
+    "slug": "noir-sana-quilted-shoulder-bag",
+    "name": "Noir Sana Quilted Shoulder Bag",
+    "color": "Black",
+    "code": "SANA-BLK",
+    "priceMinor": 549000,
+    "tags": ["bags", "shoulder", "quilted", "black", "evening"],
+    "description": "A compact black shoulder bag with soft grid quilting, a refined gold-tone turn lock and a chain strap with a matching shoulder section. An understated finishing touch for dinners, celebrations and evenings out."
+  },
+  {
+    "slug": "caramel-rumi-bucket-bag",
+    "name": "Caramel Rumi Bucket Bag",
+    "color": "Caramel",
+    "code": "RUMI-TAN",
+    "priceMinor": 499000,
+    "tags": ["bags", "bucket", "caramel", "crossbody", "everyday"],
+    "description": "A warm caramel bucket bag with a soft drawstring closure, curved top handle and detachable shoulder strap. Its clean shape, fine-grain leather-look finish and delicate gold-tone details pair beautifully with relaxed outfits."
+  },
+  {
+    "slug": "blush-lila-mini-bow-bag",
+    "name": "Blush Lila Mini Bow Bag",
+    "color": "Blush",
+    "code": "LILA-PNK",
+    "priceMinor": 399000,
+    "tags": ["bags", "mini", "bow", "blush", "top-handle"],
+    "description": "A petite blush-pink handbag with rounded corners, sculpted handles and a delicate tonal bow. Carry it by hand or add the slender shoulder strap for a soft, feminine accent to daytime and occasion looks."
+  }
+]

@@ -1,6 +1,7 @@
 import "server-only";
 
 import {
+  documentIdSchema,
   productDocumentSchema,
   productVariantDocumentSchema,
   publicProductReadSchema,
@@ -10,6 +11,7 @@ import {
 import { cache } from "react";
 
 import { getServerFirestore } from "@/lib/firebase/admin";
+import type { ReviewSort, ReviewSummary } from "@/lib/reviews/presentation";
 
 const REVIEW_PAGE_SIZE = 5;
 
@@ -73,19 +75,26 @@ export const listPublishedProductReviews = cache(
   async ({
     productId,
     after,
+    sort = "recent",
   }: {
     productId: string;
     after?: string | null;
+    sort?: ReviewSort;
   }) => {
     const database = getServerFirestore();
-    let query = database
+    const published = database
       .collection("reviews")
       .where("productId", "==", productId)
-      .where("status", "==", "PUBLISHED")
+      .where("status", "==", "PUBLISHED");
+    let query = (
+      sort === "recent"
+        ? published
+        : published.orderBy("rating", sort === "highest" ? "desc" : "asc")
+    )
       .orderBy("createdAt", "desc")
       .limit(REVIEW_PAGE_SIZE + 1);
 
-    if (after) {
+    if (after && documentIdSchema.safeParse(after).success) {
       const cursor = await database.collection("reviews").doc(after).get();
       if (
         cursor.exists &&
@@ -123,5 +132,29 @@ export const listPublishedProductReviews = cache(
           ? (documents.at(-1)?.id ?? null)
           : null,
     };
+  },
+);
+
+export const getPublishedProductReviewSummary = cache(
+  async (productId: string): Promise<ReviewSummary> => {
+    const query = getServerFirestore()
+      .collection("reviews")
+      .where("productId", "==", productId)
+      .where("status", "==", "PUBLISHED");
+    const distribution = await Promise.all(
+      [5, 4, 3, 2, 1].map(async (rating) => {
+        const snapshot = await query
+          .where("rating", "==", rating)
+          .count()
+          .get();
+        return { rating, count: snapshot.data().count };
+      }),
+    );
+    const count = distribution.reduce((total, row) => total + row.count, 0);
+    const average = count
+      ? distribution.reduce((total, row) => total + row.rating * row.count, 0) /
+        count
+      : 0;
+    return { count, average, distribution };
   },
 );

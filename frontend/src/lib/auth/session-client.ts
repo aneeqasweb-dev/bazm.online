@@ -13,5 +13,6 @@ export async function createServerSession(idToken: string): Promise<void> {
 }
 
 export async function deleteServerSession(): Promise<void> {
-  await fetch("/api/auth/session", { method: "DELETE" });
+  const response = await fetch("/api/auth/session", { method: "DELETE" });
+  if (!response.ok) throw new Error("SESSION_DELETION_FAILED");
 }

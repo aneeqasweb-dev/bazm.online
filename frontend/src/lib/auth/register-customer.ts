@@ -12,11 +12,13 @@ import { getFirebaseClientServices } from "@/lib/firebase/client";
 import type { RegistrationInput } from "./registration-schema";
 import { completeRegistration } from "./authorization-client";
 import { createServerSession } from "./session-client";
+import { emailActionSettings } from "./email-action-settings";
 
 export type RegistrationResult = { verificationSent: boolean };
 
 export async function registerCustomer(
   input: RegistrationInput,
+  nextPath = "/account",
 ): Promise<RegistrationResult> {
   const { auth } = getFirebaseClientServices();
   const credential = await createUserWithEmailAndPassword(
@@ -39,7 +41,10 @@ export async function registerCustomer(
 
   let verificationSent = false;
   if (!emailVerified) {
-    verificationSent = await sendEmailVerification(credential.user).then(
+    verificationSent = await sendEmailVerification(
+      credential.user,
+      emailActionSettings("verify", nextPath),
+    ).then(
       () => true,
       () => false,
     );

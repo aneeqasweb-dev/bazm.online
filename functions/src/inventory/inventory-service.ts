@@ -709,9 +709,18 @@ export class InventoryService {
         "PRECONDITION_FAILED",
         "This inventory reservation has expired.",
       );
-    for (const line of reservation.lines) {
-      const inventoryRef = inventoryReference(this.firestore, line.sku);
-      const inventory = await requiredInventory(transaction, inventoryRef);
+    // Firestore requires every read before the first write, including multi-item orders.
+    const inventories = await Promise.all(
+      reservation.lines.map(async (line) => {
+        const inventoryRef = inventoryReference(this.firestore, line.sku);
+        return {
+          line,
+          inventoryRef,
+          inventory: await requiredInventory(transaction, inventoryRef),
+        };
+      }),
+    );
+    for (const { line, inventoryRef, inventory } of inventories) {
       const deltas = {
         ...zeroDeltas,
         reserved: -line.quantity,
